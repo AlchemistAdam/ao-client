@@ -8,24 +8,44 @@ import dk.martinu.ao.client.event.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("SpellCheckingInspection")
 @DisplayName("KeyMap")
 public class KeyMapTest {
 
-    KeyMap createMap(final int n_actions, final int prio_max) {
-        // actions to add
-        final KeyAction[] actions = new KeyAction[n_actions];
+    @DisplayName("capacity is power of 2")
+    @ParameterizedTest
+    @CsvSource({
+            "20, 10",
+            "30, 10",
+            "40, 10",
+            "60, 20",
+            "80, 20",
+            "100, 20"
+    })
+    void capacity(final int n_actions, final int prio_max) {
+        final KeyMap map = createMap(n_actions, prio_max);
+        final KeyMap.Handle handle = map.new Handle();
+        assertEquals(1, Integer.bitCount(handle.table().length));
+        assertEquals(0, handle.table().length & 1);
+    }
 
-        // populate array with dummy actions
-        final java.util.Random r = new java.util.Random();
-        for (int i = 0; i < n_actions; i++)
-            actions[i] = new OnPressKeyAction(r.nextInt(prio_max), (action, event) -> false);
-
-        final int AZ_MAX = 'Z' - 'A';
-        final KeyMap map = new KeyMap();
-        for (KeyAction action : actions)
-            map.insert(action, r.nextInt(AZ_MAX) + 0x41); // 0x41 == VK_A
-
-        return map;
+    @DisplayName("has correct max")
+    @ParameterizedTest
+    @CsvSource({
+            "20, 10",
+            "30, 10",
+            "40, 10",
+            "60, 20",
+            "80, 20",
+            "100, 20"
+    })
+    void max(final int n_actions, final int prio_max) {
+        final KeyMap map = createMap(n_actions, prio_max);
+        final KeyMap.Handle handle = map.new Handle();
+        int max = (int) (handle.table().length * handle.loadFactor());
+        while (max < n_actions)
+            max <<= 1;
+        assertEquals(max, handle.max());
     }
 
     @DisplayName("has correct size")
@@ -41,5 +61,22 @@ public class KeyMapTest {
     void size(final int n_actions, final int prio_max) {
         final KeyMap map = createMap(n_actions, prio_max);
         assertEquals(n_actions, map.new Handle().size());
+    }
+
+    private KeyMap createMap(final int n_actions, final int prio_max) {
+        // actions to add
+        final KeyAction[] actions = new KeyAction[n_actions];
+
+        // populate array with dummy actions
+        final java.util.Random r = new java.util.Random();
+        for (int i = 0; i < n_actions; i++)
+            actions[i] = new OnPressKeyAction(r.nextInt(prio_max), (action, event) -> false);
+
+        final int AZ_MAX = 'Z' - 'A';
+        final KeyMap map = new KeyMap();
+        for (KeyAction action : actions)
+            map.insert(action, r.nextInt(AZ_MAX) + 0x41); // 0x41 == VK_A
+
+        return map;
     }
 }
