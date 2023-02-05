@@ -1,5 +1,7 @@
 package dk.martinu.ao.test.event;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -63,6 +65,8 @@ public class KeyMapTest {
         assertEquals(n_actions, map.new Handle().size());
     }
 
+    @Contract(value = "_, _ -> new", pure = true)
+    @NotNull
     private KeyMap createMap(final int n_actions, final int prio_max) {
         // actions to add
         final KeyAction[] actions = new KeyAction[n_actions];
