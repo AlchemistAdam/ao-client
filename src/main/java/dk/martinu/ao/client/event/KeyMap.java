@@ -98,7 +98,6 @@ public final class KeyMap {
         else
             table[hash] = new KeyActionList[] {list};
     }
-
     /**
      * Table to hold {@link KeyActionList} buckets.
      */
@@ -158,7 +157,7 @@ public final class KeyMap {
         if (bucket != null) {
             // add action to list if it exists
             for (final KeyActionList list : bucket) {
-                if (list.keyCode == keyCode) {
+                if (list != null && list.keyCode == keyCode) {
                     list.add(action);
                     return;
                 }
