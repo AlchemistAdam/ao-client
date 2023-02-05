@@ -157,7 +157,7 @@ public final class KeyMap {
         if (bucket != null) {
             // add action to list if it exists
             for (final KeyActionList list : bucket) {
-                if (list != null && list.keyCode == keyCode) {
+                if (list.keyCode == keyCode) {
                     list.add(action);
                     return;
                 }
