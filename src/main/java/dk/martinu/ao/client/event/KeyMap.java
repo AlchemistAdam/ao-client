@@ -67,11 +67,12 @@ public final class KeyMap {
         if (bucket.length == 1) {
             final KeyActionList list = bucket[0];
             final int hash = hash(list.keyCode) & (table.length - 1);
-            if (table[hash] != null)
+            if (table[hash] != null) {
                 table[hash] = appendListToBucket(table[hash], list);
+                bucket[0] = null;
+            }
             else
                 table[hash] = bucket;
-            bucket[0] = null;
         }
         // insert each list separately
         else
