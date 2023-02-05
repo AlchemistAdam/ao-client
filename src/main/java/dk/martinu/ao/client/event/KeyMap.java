@@ -190,4 +190,50 @@ public final class KeyMap {
         table = newTable;
         max = (int) (table.length * loadFactor);
     }
+
+    /**
+     * Debug key map handle used in JUnit tests.
+     */
+    public class Handle {
+
+        /**
+         * Counts and returns the number of collisions in the key map.
+         */
+        public int collisions() {
+            int n = 0;
+            for (KeyActionList[] bucket : table)
+                if (bucket != null && bucket.length > 1)
+                    n++;
+            return n;
+        }
+
+        /**
+         * @see KeyMap#loadFactor
+         */
+        public float loadFactor() {
+            return loadFactor;
+        }
+
+        /**
+         * @see KeyMap#max
+         */
+        public int max() {
+            return max;
+        }
+
+        /**
+         * @see KeyMap#size
+         */
+        // TODO remove if size is exposed in enclosing class
+        public int size() {
+            return size;
+        }
+
+        /**
+         * @see KeyMap#table
+         */
+        public KeyActionList[][] table() {
+            return table;
+        }
+    }
 }
