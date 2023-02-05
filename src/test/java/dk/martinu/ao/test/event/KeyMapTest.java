@@ -31,7 +31,12 @@ public class KeyMapTest {
     @DisplayName("has correct size")
     @ParameterizedTest
     @CsvSource({
+            "20, 10",
+            "30, 10",
+            "40, 10",
             "60, 20",
+            "80, 20",
+            "100, 20"
     })
     void size(final int n_actions, final int prio_max) {
         final KeyMap map = createMap(n_actions, prio_max);
