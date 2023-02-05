@@ -19,24 +19,6 @@ public final class KeyMap {
     private static final int DEFAULT_CAPACITY = 32;
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-    // TODO remove debug method from release
-    public static void debug() {
-        // actions to add
-        final int N_ACTIONS = 20;
-        final KeyAction[] actions = new KeyAction[N_ACTIONS];
-
-        // populate array with dummy actions
-        final int PRIO_MAX = 10;
-        final java.util.Random r = new java.util.Random();
-        for (int i = 0; i < N_ACTIONS; i++)
-            actions[i] = new OnPressKeyAction(r.nextInt(PRIO_MAX), (action, event) -> false);
-
-        final int AZ_MAX = 'Z' - 'A';
-        final KeyMap map = new KeyMap();
-        for (KeyAction action : actions)
-            map.insert(action, r.nextInt(AZ_MAX) + 0x41); // 0x41 == VK_A
-    }
-
     /**
      * Returns a new bucket that is the result of appending the specified
      * list to the specified bucket.
