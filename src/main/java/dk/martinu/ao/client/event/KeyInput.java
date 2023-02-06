@@ -33,6 +33,8 @@ import dk.martinu.ao.client.AbstractTarget;
  * @author Adam Martinu
  * @version 1.0, 2023-06-02
  * @since 1.0
+ * @see AbstractTarget#keyPressed(KeyEvent)
+ * @see AbstractTarget#keyReleased(KeyEvent)
  */
 public record KeyInput(@NotNull KeyAction action, @NotNull KeyEvent event) {
 
@@ -56,7 +58,7 @@ public record KeyInput(@NotNull KeyAction action, @NotNull KeyEvent event) {
      * call.
      *
      * @return The boolean value returned by the key action call.
-     * @see KeyAction
+     * @see KeyAction#perform(KeyEvent)
      */
     public boolean process() {
         return action.perform(event);
