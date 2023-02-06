@@ -31,7 +31,7 @@ import dk.martinu.kofi.codecs.KofiCodec;
  * @version 1.0, 2023-02-06
  * @since 1.0
  */
-public class Main {
+public final class Main {
 
     public static final Path CLIENT_CONFIG_PATH = Path.of("client.kofi");
 

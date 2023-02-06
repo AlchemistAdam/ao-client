@@ -39,7 +39,7 @@ import dk.martinu.ao.client.util.Resolution;
  * @version 1.0, 2023-02-06
  * @since 1.0
  */
-public class MouseInput {
+public final class MouseInput {
 
     // TODO should maybe make fields private and expose with getter methods?
     public int x = 0;

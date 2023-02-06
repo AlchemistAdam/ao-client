@@ -29,7 +29,7 @@ import java.util.Objects;
  * @version 1.0, 2023-02-06
  * @since 1.0
  */
-public class Resolution {
+public final class Resolution {
 
     public final int width;
     public final int height;
