@@ -74,4 +74,14 @@ public final class KeyActionList {
 
         actions = newActions;
     }
+
+    /**
+     * Debug key map handle used in JUnit tests.
+     */
+    public class Handle {
+
+        public KeyAction[] actions() {
+            return actions;
+        }
+    }
 }
