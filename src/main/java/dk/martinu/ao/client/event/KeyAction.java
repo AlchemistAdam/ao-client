@@ -21,7 +21,7 @@ import org.jetbrains.annotations.*;
 
 import java.awt.event.KeyEvent;
 
-import dk.martinu.ao.client.AbstractTarget;
+import dk.martinu.ao.client.core.AbstractTarget;
 
 /**
  * This abstract class defines the outline for an action to perform in response
