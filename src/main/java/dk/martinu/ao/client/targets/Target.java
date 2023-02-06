@@ -14,13 +14,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package dk.martinu.ao.client.core;
+package dk.martinu.ao.client.targets;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Graphics2D;
 import java.awt.event.*;
 
+import dk.martinu.ao.client.core.GameThread;
 import dk.martinu.ao.client.util.Resolution;
 
 /**

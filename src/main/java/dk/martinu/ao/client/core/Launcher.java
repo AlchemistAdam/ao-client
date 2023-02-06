@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 
 import dk.martinu.ao.client.Log;
 import dk.martinu.ao.client.targets.Intro;
+import dk.martinu.ao.client.targets.Target;
 import dk.martinu.kofi.Document;
 import dk.martinu.kofi.Property;
 
