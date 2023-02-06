@@ -18,14 +18,15 @@ package dk.martinu.ao.client.util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Insets;
 import java.util.Objects;
 
 /**
  * Immutable data class for storing 2D graphics information.
  *
  * @author Adam Martinu
- * @version 1.0, 2023-06-02
+ * @version 1.0, 2023-02-06
  * @since 1.0
  */
 public class Resolution {
