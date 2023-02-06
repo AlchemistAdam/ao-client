@@ -25,7 +25,6 @@ import java.util.Objects;
 
 import dk.martinu.ao.client.*;
 import dk.martinu.ao.client.core.GameThread;
-import dk.martinu.ao.client.core.Target;
 import dk.martinu.ao.client.event.*;
 import dk.martinu.ao.client.util.Resolution;
 
