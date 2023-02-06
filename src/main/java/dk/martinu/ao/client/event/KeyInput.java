@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 
-import dk.martinu.ao.client.*;
+import dk.martinu.ao.client.AbstractTarget;
 
 /**
  * Container class used by {@link AbstractTarget} objects when moving key
@@ -31,23 +31,24 @@ import dk.martinu.ao.client.*;
  * when the input is {@link #process() processed}.
  *
  * @author Adam Martinu
- * @since 1.0
  * @version 1.0, 2023-06-02
+ * @since 1.0
  */
 public record KeyInput(@NotNull KeyAction action, @NotNull KeyEvent event) {
 
     /**
      * Constructs a new {@code KeyInput} object with the specified key action
      * and key event.
+     * <p>
+     * <b>NOTE:</b> this method does not check for null pointers. The action
+     * and event must not be null, otherwise it might result in an exception.
      *
      * @param action The key action
      * @param event  The key event
-     * @throws NullPointerException if {@code action} or {@code event} is
-     * {@code null}
      */
     public KeyInput(@NotNull final KeyAction action, @NotNull final KeyEvent event) {
-        this.action = Objects.requireNonNull(action, "action must not be null");
-        this.event = Objects.requireNonNull(event, "event is null");
+        this.action = action;
+        this.event = event;
     }
 
     /**
