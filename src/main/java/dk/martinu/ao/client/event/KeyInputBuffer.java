@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
-import dk.martinu.ao.client.core.AbstractTarget;
+import dk.martinu.ao.client.targets.AbstractTarget;
 
 /**
  * Resizable buffer class for storing and processing {@link KeyInput} objects
@@ -34,9 +34,9 @@ import dk.martinu.ao.client.core.AbstractTarget;
  *
  * @author Adam Martinu
  * @version 1.0, 2023-06-02
- * @since 1.0
  * @see AbstractTarget#keyPressed(KeyEvent)
  * @see AbstractTarget#keyReleased(KeyEvent)
+ * @since 1.0
  */
 public final class KeyInputBuffer {
 
