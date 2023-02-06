@@ -38,11 +38,13 @@ import dk.martinu.ao.client.targets.AbstractTarget;
 public abstract class KeyAction implements Comparable<KeyAction> {
 
     /**
-     * Key mask for key pressed events.
+     * Key mask for key pressed events. Can be combined with
+     * {@link #KEY_RELEASED}.
      */
     public static final int KEY_PRESSED = 1 << 1;
     /**
-     * Key mask for key released events.
+     * Key mask for key released events. Can be combined with
+     * {@link #KEY_PRESSED}.
      */
     public static final int KEY_RELEASED = 1 << 2;
     /**
