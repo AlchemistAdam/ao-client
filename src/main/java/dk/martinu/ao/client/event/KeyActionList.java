@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.event.KeyEvent;
 import java.util.Objects;
 
-import dk.martinu.ao.client.core.AbstractTarget;
+import dk.martinu.ao.client.targets.AbstractTarget;
 
 /**
  * A sorted, resizable list of {@link KeyAction} objects used by {@link KeyMap}

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.KeyEvent;
 
-import dk.martinu.ao.client.core.AbstractTarget;
+import dk.martinu.ao.client.targets.AbstractTarget;
 
 /**
  * Container class used by {@link AbstractTarget} objects when moving key
@@ -31,9 +31,9 @@ import dk.martinu.ao.client.core.AbstractTarget;
  *
  * @author Adam Martinu
  * @version 1.0, 2023-06-02
- * @since 1.0
  * @see AbstractTarget#keyPressed(KeyEvent)
  * @see AbstractTarget#keyReleased(KeyEvent)
+ * @since 1.0
  */
 public record KeyInput(@NotNull KeyAction action, @NotNull KeyEvent event) {
 
