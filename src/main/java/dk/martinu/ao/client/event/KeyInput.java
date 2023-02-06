@@ -19,9 +19,8 @@ package dk.martinu.ao.client.event;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.KeyEvent;
-import java.util.Objects;
 
-import dk.martinu.ao.client.AbstractTarget;
+import dk.martinu.ao.client.core.AbstractTarget;
 
 /**
  * Container class used by {@link AbstractTarget} objects when moving key
