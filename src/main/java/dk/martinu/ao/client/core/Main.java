@@ -28,7 +28,7 @@ import dk.martinu.kofi.codecs.KofiCodec;
  * Main entry point for starting the Abaddon Online client.
  *
  * @author Adam Martinu
- * @version 1.0, 2023-06-02
+ * @version 1.0, 2023-02-06
  * @since 1.0
  */
 public class Main {
