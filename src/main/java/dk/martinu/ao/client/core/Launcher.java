@@ -40,7 +40,7 @@ import dk.martinu.kofi.Property;
  * @see #run(Target)
  * @since 1.0
  */
-class Launcher {
+final class Launcher {
 
     /**
      * Enables or disables dynamic layout of top level containers.
