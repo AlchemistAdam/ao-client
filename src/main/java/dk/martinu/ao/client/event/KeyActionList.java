@@ -16,13 +16,17 @@
  */
 package dk.martinu.ao.client.event;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.event.KeyEvent;
 import java.util.Objects;
+
+import dk.martinu.ao.client.core.AbstractTarget;
 
 /**
  * A sorted, resizable list of {@link KeyAction} objects used by {@link KeyMap}
- * and {@link dk.martinu.ao.client.AbstractTarget} to manage key actions that
+ * and {@link AbstractTarget} to manage key actions that
  * are inserted with/bound to the same key code. key actions are sorted by
  * {@link KeyAction#getPriority() priority} in descending order.
  * <p>
@@ -92,12 +96,18 @@ public final class KeyActionList {
     }
 
     /**
-     * Debug key map handle used in JUnit tests.
+     * Maps all actions in this list to {@link KeyInput} objects for the
+     * specified event.
+     *
+     * @param event the key event
+     * @return a new array of key input objects
      */
-    public class Handle {
-
-        public KeyAction[] actions() {
-            return actions;
-        }
+    @Contract(value = "_ -> new", pure = true)
+    @NotNull
+    public KeyInput[] mapToInput(@NotNull final KeyEvent event) {
+        final KeyInput[] input = new KeyInput[actions.length];
+        for (int i = 0; i < actions.length; i++)
+            input[i] = new KeyInput(actions[i], event);
+        return input;
     }
 }
