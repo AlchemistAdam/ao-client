@@ -35,7 +35,7 @@ import dk.martinu.kofi.Property;
  * start a client, but serves as a scaffolding for doing so (see {@link Main}).
  *
  * @author Adam Martinu
- * @version 1.0, 2023-06-02
+ * @version 1.0, 2023-02-06
  * @see #Launcher(Document)
  * @see #run(Target)
  * @since 1.0

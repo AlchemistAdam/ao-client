@@ -33,7 +33,7 @@ import dk.martinu.ao.client.targets.AbstractTarget;
  * by a single thread.
  *
  * @author Adam Martinu
- * @version 1.0, 2023-06-02
+ * @version 1.0, 2023-02-06
  * @see AbstractTarget#keyPressed(KeyEvent)
  * @see AbstractTarget#keyReleased(KeyEvent)
  * @since 1.0
