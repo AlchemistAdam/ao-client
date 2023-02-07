@@ -172,14 +172,13 @@ final class Launcher {
         try {
             SwingUtilities.invokeAndWait(() ->
                     // TODO create and pass GraphicsConfiguration
-                    thread.createFrame(null).setTarget(t).start());
+                    thread.setTarget(t).start());
             Log.i("launcher started thread successfully");
         }
         catch (final Exception e) {
             e.printStackTrace();
             Log.e("launcher terminated from exception", e);
-            if (thread.frame != null)
-                thread.frame.shutdown();
+            thread.frame.shutdown();
         }
     }
 
