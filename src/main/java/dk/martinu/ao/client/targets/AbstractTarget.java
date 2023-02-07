@@ -44,24 +44,6 @@ import static dk.martinu.ao.client.event.KeyAction.KEY_RELEASED;
 // TODO be able to edit key bindings (maybe as remove+add)
 public abstract class AbstractTarget implements Target {
 
-    // unused
-//    static void addKeyAction(@NotNull final KeyAction keyAction, @NotNull final KeyAction[] array) {
-//        for (int i = 0; i < array.length; i++) {
-//            if (array[i] == null) {
-//                array[i] = keyAction;
-//                return;
-//            }
-//            else if (keyAction.compareTo(array[i]) > 0) {
-//                // shifts all key actions with index greater than or equal to i
-//                // to the right
-//                for (int k = array.length - 1; k > i; k--)
-//                    array[k] = array[k - 1];
-//                array[i] = keyAction;
-//                return;
-//            }
-//        }
-//    }
-
     /**
      * The game thread that owns this target.
      */
