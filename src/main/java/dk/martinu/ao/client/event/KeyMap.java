@@ -24,7 +24,7 @@ import java.util.Objects;
 
 /**
  * Hash map implementation for storing {@link KeyAction actions} and retrieving
- * {@link KeyActionList lists} containing actions for a specific key code.
+ * {@link KeyActionList lists} for a specific key code.
  *
  * @author Adam Martinu
  * @version 1.0, 2023-02-05
@@ -115,6 +115,7 @@ public final class KeyMap {
         else
             table[hash] = new KeyActionList[] {list};
     }
+
     /**
      * Table to hold {@link KeyActionList} buckets.
      */

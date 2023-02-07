@@ -41,11 +41,7 @@ import dk.martinu.ao.client.targets.AbstractTarget;
 public final class KeyInputBuffer {
 
     /**
-     * Processes all {@link KeyInput} in the specified buffer array. For a
-     * given event, this method will process all key input for that event in
-     * ascending order and check if the event was consumed by the key input. If
-     * an event is consumed, then all subsequent key input for that event are
-     * skipped.
+     * Processes all {@link KeyInput} in the specified buffer array.
      *
      * @see #processInput()
      * @see KeyInput#process()
@@ -133,7 +129,10 @@ public final class KeyInputBuffer {
     }
 
     /**
-     * Processes all {@link KeyInput} objects added to this buffer.
+     * Processes all {@link KeyInput} objects added to this buffer. For a given
+     * event, this method will process each key input for that event in order
+     * and check if the event was consumed by the key input. If an event is
+     * consumed, then all subsequent key input for that event are skipped.
      *
      * @see #add(KeyInput[])
      * @see KeyInput#process()
