@@ -25,17 +25,51 @@ import java.util.Objects;
 
 import dk.martinu.ao.client.util.Resolution;
 
+/**
+ * An implementation of AWT {@link Frame} used by {@link GameThread} to obtain
+ * graphical resources for rendering.
+ *
+ * @author Adam Martinu
+ * @version 1.0, 2023-02-08
+ * @since 1.0
+ */
 final class GameFrame extends Frame {
 
     public static final int MINIMUM_WIDTH = 800;
     public static final int MINIMUM_HEIGHT = 600;
 
+    /**
+     * The current resolution of this frame. Changes whenever the frame is
+     * resized.
+     */
+    @NotNull
+    volatile Resolution resolution;
+    /**
+     * The game thread that owns this frame.
+     */
     @NotNull
     private final GameThread thread;
-    @NotNull
-    private volatile Resolution resolution;
-    private volatile boolean shutdown = false;
+    /**
+     * Flag that indicates if this frame has been shut down. Used to ensure
+     * {@link #dispose()} is only called once, otherwise the frame might not
+     * close properly.
+     *
+     * @see #shutdown()
+     * @see GameThread#shutdown()
+     */
+    private boolean shutdown = false;
 
+    /**
+     * Constructs a new frame that is owned by the specified game thread and
+     * using the specified graphics configuration.
+     *
+     * @param thread the owning thread
+     * @param config the configuration used to create the frame, can be
+     *               {@code null}
+     * @throws NullPointerException     if {@code thread} is null
+     * @throws IllegalArgumentException see {@link Frame#Frame(GraphicsConfiguration)}
+     * @throws HeadlessException        see {@link Frame#Frame(GraphicsConfiguration)}
+     */
     GameFrame(@NotNull final GameThread thread, @Nullable final GraphicsConfiguration config) {
         super(config);
         this.thread = Objects.requireNonNull(thread, "thread must not be null");
@@ -43,6 +77,12 @@ final class GameFrame extends Frame {
         resolution = new Resolution(this);
     }
 
+    /**
+     * Disposes the frame (see {@link Frame#dispose()}). Also
+     * {@link GameThread#shutdown() shuts down} the thread that owns this
+     * frame, in case the frame was closed manually by the user and not through
+     * the user interface.
+     */
     @Override
     public synchronized void dispose() {
         shutdown = true;
@@ -50,22 +90,43 @@ final class GameFrame extends Frame {
         super.dispose();
     }
 
+    /**
+     * Does nothing. All graphical work is done in {@link GameThread}.
+     */
     @Contract(pure = true)
     @Override
     public void paint(final Graphics g) { }
 
-    @Nullable
+    /**
+     * Creates and returns a new buffer strategy with the specified amount of
+     * buffers.
+     *
+     * @param buffers number of buffers to create
+     * @return a new buffer strategy
+     * @throws IllegalArgumentException if {@code buffers} is less than
+     *                                  {@code 1}
+     * @throws IllegalStateException    if this frame is not displayable
+     * @see #createBufferStrategy(int)
+     * @see #isDisplayable()
+     */
+    @Contract("_ -> new")
+    @NotNull
     BufferStrategy getNewBufferStrategy(final int buffers) {
         createBufferStrategy(buffers);
         return getBufferStrategy();
     }
 
-    @Contract(pure = true)
-    @NotNull
-    Resolution getResolution() {
-        return resolution;
-    }
-
+    /**
+     * Shuts down this frame if it has not already been shut down.
+     * <p>
+     * <b>NOTE:</b> the frame must be shut down on the Event Dispatch Thread
+     * (EDT). If this method is called from a different thread (such as a
+     * {@link GameThread}), then the frame will be scheduled to shut down on
+     * the EDT.
+     *
+     * @see #dispose()
+     * @see EventQueue#invokeLater(Runnable)
+     */
     void shutdown() {
         if (EventQueue.isDispatchThread())
             synchronized (this) {
@@ -81,6 +142,14 @@ final class GameFrame extends Frame {
             });
     }
 
+    /**
+     * Updates/Initializes the cursor position on the frame by firing a
+     * synthetic mouse moved event. If the cursor is not over the frame, then
+     * a position of (0; 0) is used.
+     *
+     * @see #getMousePosition()
+     * @see #processMouseMotionEvent(MouseEvent)
+     */
     void updateCursorPosition() {
         final Point position = getMousePosition();
         if (position != null)
@@ -91,6 +160,9 @@ final class GameFrame extends Frame {
                     0, 0, 0, 0, false));
     }
 
+    /**
+     * Initializes this frame.
+     */
     private void init() {
         addComponentListener(new ComponentAdapter() {
             @Override
