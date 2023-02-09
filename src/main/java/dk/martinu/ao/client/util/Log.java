@@ -16,7 +16,8 @@
  */
 package dk.martinu.ao.client.util;
 
-import java.text.DateFormat;
+import org.jetbrains.annotations.*;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
@@ -24,168 +25,58 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author Adam Martinu
- * @version 1.1 2021-04-27
+ * @version 1.0, 2023-02-09
+ * @since 1.0
  */
-@SuppressWarnings("unused")
-public class Log {
+public final class Log {
 
-    public static final String DEFAULT_DATE_PATTERN = "yy-MM-dd'T'hh:mm:ss,SSSX";
-    private static Log log;
+    private static final LogThread thread = new LogThread();
+    private static final LinkedBlockingQueue<Object> records = new LinkedBlockingQueue<>();
+    private static final MutableString buffer = new MutableString(256);
 
-    public static void d(final String msg, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.DEBUG, msg, null, params));
+    static {
+        thread.start();
     }
 
-    public static void d(final String msg, final Throwable ex, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.DEBUG, msg, ex, params));
+    public static void d(@NotNull final String msg, @NotNull final Object... params) {
+        records.add(new Record(Level.DEBUG, msg, null, params));
     }
 
-    public static void e(final String msg, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.ERROR, msg, null, params));
+    public static void d(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+        records.add(new Record(Level.DEBUG, msg, ex, params));
     }
 
-    public static void e(final String msg, final Throwable ex, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.ERROR, msg, ex, params));
+    public static void e(@NotNull final String msg, @NotNull final Object... params) {
+        records.add(new Record(Level.ERROR, msg, null, params));
     }
 
-    public static void i(final String msg, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.INFO, msg, null, params));
+    public static void e(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+        records.add(new Record(Level.ERROR, msg, ex, params));
     }
 
-    public static void i(final String msg, final Throwable ex, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.INFO, msg, ex, params));
+    public static void i(@NotNull final String msg, @NotNull final Object... params) {
+        records.add(new Record(Level.INFO, msg, null, params));
     }
 
-    public static boolean isPrintDate() {
-        return getInstance().printDate;
+    public static void i(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+        records.add(new Record(Level.INFO, msg, ex, params));
     }
 
-    public static boolean isPrintLevel() {
-        return getInstance().printLevel;
+    public static void w(@NotNull final String msg, @NotNull final Object... params) {
+        records.add(new Record(Level.WARNING, msg, null, params));
     }
 
-    public static boolean isPrintThread() {
-        return getInstance().printThread;
+    public static void w(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+        records.add(new Record(Level.WARNING, msg, ex, params));
     }
 
-    public static void record(final Object record) {
-        getInstance().add(Objects.requireNonNull(record, "record is null"));
-    }
-
-    public static void setDateFormat(final String pattern) {
-        getInstance().dateFormat = new SimpleDateFormat(pattern);
-    }
-
-    public static void setDateFormat(final DateFormat dateFormat) {
-        getInstance().dateFormat = Objects.requireNonNull(dateFormat, "dateFormat is null");
-    }
-
-    public static void setPrintDate(final boolean b) {
-        getInstance().printDate = b;
-    }
-
-    public static void setPrintLevel(final boolean b) {
-        getInstance().printLevel = b;
-    }
-
-    public static void setPrintThread(final boolean b) {
-        getInstance().printThread = b;
-    }
-
-    public static void w(final String msg, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.WARNING, msg, null, params));
-    }
-
-    public static void w(final String msg, final Throwable ex, final Object... params) {
-        final Log log = getInstance();
-        log.add(log.new Record(Level.WARNING, msg, ex, params));
-    }
-
-    protected static Log getInstance() {
-        if (log != null)
-            return log;
-        synchronized (Log.class) {
-            if (log == null)
-                log = new Log();
-            return log;
-        }
-    }
-
-    protected final LogThreadDaemon logThread;
-    protected final LinkedBlockingQueue<Object> records;
-    protected final MutableString buffer = new MutableString(256);
-    protected DateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ROOT);
-    protected boolean printDate = true;
-    protected boolean printThread = true;
-    protected boolean printLevel = true;
-
-    private Log() {
-        records = new LinkedBlockingQueue<>();
-        logThread = new LogThreadDaemon();
-        logThread.start();
-    }
-
-    protected void add(final Object record) {
-        records.add(record);
-    }
-
-    public class Record {
-
-        public final Level level;
-        public final String msg;
-        public final Throwable ex;
-        public final Object[] params;
-        public final long when = System.currentTimeMillis();
-        public final String threadName = '[' + Thread.currentThread().getName() + ']';
-        private String cache;
-
-        public Record(final Level level, final String msg, final Throwable ex, final Object... params) {
-            this.level = level;
-            this.msg = msg;
-            this.ex = ex;
-            this.params = params;
-        }
-
-        @Override
-        public String toString() {
-            if (cache != null)
-                return cache;
-
-            synchronized (buffer) {
-                if (isPrintDate())
-                    buffer.add(dateFormat.format(when)).append(' ');
-                if (isPrintThread())
-                    buffer.add(threadName).append(' ');
-                if (isPrintLevel())
-                    buffer.add(level.name()).append(' ');
-                if (params != null)
-                    buffer.add(String.format(Locale.ROOT, msg, params));
-                else
-                    buffer.add(msg);
-                if (ex != null)
-                    buffer.add(ex.toString());
-
-                cache = buffer.toString();
-                buffer.clear();
-                return cache;
-            }
-        }
-    }
-
-    protected enum Level {
+    private enum Level {
         DEBUG, INFO, WARNING, ERROR,
     }
 
-    protected class LogThreadDaemon extends Thread {
+    private static class LogThread extends Thread {
 
-        public LogThreadDaemon() {
+        LogThread() {
             super(Thread.currentThread().getThreadGroup(), (Runnable) null);
             setDaemon(true);
         }
@@ -200,6 +91,61 @@ public class Log {
                 catch (final InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    private static class Record {
+
+        private static final String DEFAULT_DATE_PATTERN = "yy-MM-dd'T'hh:mm:ss,SSSX";
+        private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ROOT);
+
+        private final long when;
+        @NotNull
+        private final String threadName;
+        @NotNull
+        private final Level level;
+        @NotNull
+        private final String msg;
+        @Nullable
+        private final Throwable ex;
+        @Nullable
+        private final Object[] params;
+
+        Record(@NotNull final Level level, @NotNull final String msg, @Nullable final Throwable ex,
+                @NotNull final Object... params) {
+            this.level = Objects.requireNonNull(level, "level is null");
+            this.msg = Objects.requireNonNull(msg, "msg is null");
+            this.ex = ex;
+            this.params = Objects.requireNonNull(params, "params is null");
+            when = System.currentTimeMillis();
+            threadName = '[' + Thread.currentThread().getName() + ']';
+        }
+
+        @Contract(value = "-> new", pure = true)
+        @NotNull
+        @Override
+        public String toString() {
+            synchronized (buffer) {
+
+                buffer.add(dateFormat.format(when))
+                        .append(' ')
+                        .add(threadName)
+                        .append(' ')
+                        .add(level.name())
+                        .append(' ');
+
+                if (params != null)
+                    buffer.add(String.format(Locale.ROOT, msg, params));
+                else
+                    buffer.add(msg);
+
+                if (ex != null)
+                    buffer.add(ex.toString());
+
+                final String rv = buffer.toString();
+                buffer.clear();
+                return rv;
             }
         }
     }
