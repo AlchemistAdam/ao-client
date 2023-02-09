@@ -24,21 +24,12 @@ import java.awt.event.*;
 import java.util.Objects;
 import java.util.function.Function;
 
-import dk.martinu.ao.client.event.MouseAction;
 import dk.martinu.ao.client.core.GameThread;
-import dk.martinu.ao.client.event.KeyAction;
-import dk.martinu.ao.client.event.OnPressAndReleaseKeyAction;
-import dk.martinu.ao.client.ui.Component;
-import dk.martinu.ao.client.ui.Scene;
+import dk.martinu.ao.client.event.*;
+import dk.martinu.ao.client.ui.*;
 import dk.martinu.ao.client.util.Resolution;
 
 public class UITarget extends AbstractTarget {
-
-    public static final String KA_FOCUS_TRAV_UP = "UITarget.focusTraverseUp";
-    public static final String KA_FOCUS_TRAV_LEFT = "UITarget.focusTraverseLeft";
-    public static final String KA_FOCUS_TRAV_DOWN = "UITarget.focusTraverseDown";
-    public static final String KA_FOCUS_TRAV_RIGHT = "UITarget.focusTraverseRight";
-    public static final String KA_FOCUS_DO_ACTION = "UITarget.focusDoAction";
 
     @Nullable
     protected Scene scene = null;
@@ -55,7 +46,8 @@ public class UITarget extends AbstractTarget {
 
     @Override
     public void paint(@NotNull final Graphics2D g, @NotNull final Resolution r) {
-        paintScene(g, r);
+        if (scene != null)
+            scene.paint(g, r);
     }
 
     public void setScene(@Nullable final Scene scene) {
@@ -108,7 +100,6 @@ public class UITarget extends AbstractTarget {
         return null;
     }
 
-    // TODO document key action priorities and bindings
     @Override
     protected void initKeyBindings() {
         final KeyAction focusTraverseUp = new OnPressAndReleaseKeyAction(200, (action, event) -> {
@@ -191,11 +182,6 @@ public class UITarget extends AbstractTarget {
         bindKeys(focusDoAction, KeyEvent.VK_ENTER, KeyEvent.VK_SPACE);
     }
 
-    protected void paintScene(@NotNull final Graphics2D g, @NotNull final Resolution r) {
-        if (scene != null)
-            scene.paint(g, r);
-    }
-
     public class UIMouseAction implements MouseAction {
 
         @Override
@@ -258,30 +244,5 @@ public class UITarget extends AbstractTarget {
             if (mc != null && mc.isScrollable())
                 mc.doMouseWheelActions(UITarget.this, event);
         }
-    }
-
-    /**
-     * Direction enum used by focus traversal of UI components.
-     *
-     * @see UITarget#traverseFocus(FocusTraverseDirection)
-     */
-    protected enum FocusTraverseDirection {
-
-        /**
-         * The focus is traversing upwards.
-         */
-        UP,
-        /**
-         * The focus is traversing towards the left.
-         */
-        LEFT,
-        /**
-         * The focus is traversing downwards.
-         */
-        DOWN,
-        /**
-         * The focus is traversing towards the right.
-         */
-        RIGHT
     }
 }
