@@ -29,6 +29,10 @@ import dk.martinu.ao.client.event.*;
 import dk.martinu.ao.client.ui.*;
 import dk.martinu.ao.client.util.Resolution;
 
+import static dk.martinu.ao.client.ui.FocusTraverseDirection.*;
+import static java.awt.event.KeyEvent.KEY_PRESSED;
+import static java.awt.event.KeyEvent.KEY_RELEASED;
+
 public class UITarget extends AbstractTarget {
 
     @Nullable
@@ -37,11 +41,6 @@ public class UITarget extends AbstractTarget {
     public UITarget(@NotNull final GameThread thread) {
         super(thread);
         mouseAction = new UIMouseAction();
-    }
-
-    @Nullable
-    public Scene getScene() {
-        return scene;
     }
 
     @Override
@@ -103,13 +102,13 @@ public class UITarget extends AbstractTarget {
     @Override
     protected void initKeyBindings() {
         final KeyAction focusTraverseUp = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KeyEvent.KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(FocusTraverseDirection.UP) != null) {
+            if (event.getID() == KEY_PRESSED) {
+                if (action.getUserObject() == null && traverseFocus(UP) != null) {
                     action.setUserObject(event);
                     return false;
                 }
             }
-            else if (event.getID() == KeyEvent.KEY_RELEASED && action.getUserObject() != null) {
+            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
                 action.setUserObject(null);
                 return false;
             }
@@ -118,13 +117,13 @@ public class UITarget extends AbstractTarget {
         bindKeys(focusTraverseUp, KeyEvent.VK_UP, KeyEvent.VK_W);
 
         final KeyAction focusTraverseLeft = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KeyEvent.KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(FocusTraverseDirection.LEFT) != null) {
+            if (event.getID() == KEY_PRESSED) {
+                if (action.getUserObject() == null && traverseFocus(LEFT) != null) {
                     action.setUserObject(event);
                     return false;
                 }
             }
-            else if (event.getID() == KeyEvent.KEY_RELEASED && action.getUserObject() != null) {
+            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
                 action.setUserObject(null);
                 return false;
             }
@@ -133,13 +132,13 @@ public class UITarget extends AbstractTarget {
         bindKeys(focusTraverseLeft, KeyEvent.VK_LEFT, KeyEvent.VK_A);
 
         final KeyAction focusTraverseDown = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KeyEvent.KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(FocusTraverseDirection.DOWN) != null) {
+            if (event.getID() == KEY_PRESSED) {
+                if (action.getUserObject() == null && traverseFocus(DOWN) != null) {
                     action.setUserObject(event);
                     return false;
                 }
             }
-            else if (event.getID() == KeyEvent.KEY_RELEASED && action.getUserObject() != null) {
+            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
                 action.setUserObject(null);
                 return false;
             }
@@ -148,13 +147,13 @@ public class UITarget extends AbstractTarget {
         bindKeys(focusTraverseDown, KeyEvent.VK_DOWN, KeyEvent.VK_S);
 
         final KeyAction focusTraverseRight = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KeyEvent.KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(FocusTraverseDirection.RIGHT) != null) {
+            if (event.getID() == KEY_PRESSED) {
+                if (action.getUserObject() == null && traverseFocus(RIGHT) != null) {
                     action.setUserObject(event);
                     return false;
                 }
             }
-            else if (event.getID() == KeyEvent.KEY_RELEASED && action.getUserObject() != null) {
+            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
                 action.setUserObject(null);
                 return false;
             }
@@ -167,7 +166,7 @@ public class UITarget extends AbstractTarget {
                 return true;
             final Component fc = scene.getFocusedComponent();
             if (fc != null) {
-                if (event.getID() == KeyEvent.KEY_PRESSED) {
+                if (event.getID() == KEY_PRESSED) {
                     scene.setPressedComponent(fc);
                     return false;
                 }
