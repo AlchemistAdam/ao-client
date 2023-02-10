@@ -19,8 +19,8 @@ package dk.martinu.ao.client.core;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import dk.martinu.ao.client.Log;
 import dk.martinu.ao.client.targets.Login;
+import dk.martinu.ao.client.util.Log;
 import dk.martinu.kofi.Document;
 import dk.martinu.kofi.codecs.KofiCodec;
 
