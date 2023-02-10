@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-import dk.martinu.ao.client.Log;
+import dk.martinu.ao.client.util.Log;
 import dk.martinu.ao.client.ZUtil;
 import dk.martinu.ao.client.targets.Target;
 import dk.martinu.ao.client.util.Resolution;
