@@ -19,62 +19,139 @@ package dk.martinu.ao.client.util;
 import org.jetbrains.annotations.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
+ * Simple logger implementation. Can log messages with the following levels of
+ * verbosity, ordered from least to most:
+ * <ol>
+ *     <li>{@link #e(String, Object...) Error}</li>
+ *     <li>{@link #w(String, Object...) Warning}</li>
+ *     <li>{@link #d(String, Object...) Debug}</li>
+ *     <li>{@link #i(String, Object...) Info}</li>
+ * </ol>
+ * Each method is overloaded to accept an optional {@code Throwable} parameter,
+ * and can also accept an array of parameters to
+ * {@link Formatter#format(String, Object...) format} the message. This
+ * implementation is threadsafe and can be used concurrently.
+ *
  * @author Adam Martinu
  * @version 1.0, 2023-02-09
  * @since 1.0
  */
 public final class Log {
 
+    /**
+     * Daemon thread to take added log records and post them.
+     */
     private static final LogThread thread = new LogThread();
+    /**
+     * Blocking queue to hold added log records.
+     */
     private static final LinkedBlockingQueue<Object> records = new LinkedBlockingQueue<>();
-    private static final MutableString buffer = new MutableString(256);
 
     static {
+        // start daemon thread when Log is loaded
         thread.start();
     }
 
-    public static void d(@NotNull final String msg, @NotNull final Object... params) {
+    /**
+     * Logs a debug message.
+     *
+     * @param msg    the message
+     * @param params optional parameters for formatting the message
+     */
+    public static void d(@NotNull final String msg, @Nullable final Object... params) {
         records.add(new Record(Level.DEBUG, msg, null, params));
     }
 
-    public static void d(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+    /**
+     * Logs a debug message.
+     *
+     * @param msg    the message
+     * @param ex     the throwable related to the message, or {@code null}
+     * @param params optional parameters for formatting the message
+     */
+    public static void d(@NotNull final String msg, @Nullable final Throwable ex, @Nullable final Object... params) {
         records.add(new Record(Level.DEBUG, msg, ex, params));
     }
 
+    /**
+     * Logs an error message.
+     *
+     * @param msg    the message
+     * @param params optional parameters for formatting the message
+     */
     public static void e(@NotNull final String msg, @NotNull final Object... params) {
         records.add(new Record(Level.ERROR, msg, null, params));
     }
 
-    public static void e(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+    /**
+     * Logs an error message.
+     *
+     * @param msg    the message
+     * @param ex     the throwable related to the message, or {@code null}
+     * @param params optional parameters for formatting the message
+     */
+    public static void e(@NotNull final String msg, @Nullable final Throwable ex, @Nullable final Object... params) {
         records.add(new Record(Level.ERROR, msg, ex, params));
     }
 
+    /**
+     * Logs an info message.
+     *
+     * @param msg    the message
+     * @param params optional parameters for formatting the message
+     */
     public static void i(@NotNull final String msg, @NotNull final Object... params) {
         records.add(new Record(Level.INFO, msg, null, params));
     }
 
-    public static void i(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+    /**
+     * Logs an info message.
+     *
+     * @param msg    the message
+     * @param ex     the throwable related to the message, or {@code null}
+     * @param params optional parameters for formatting the message
+     */
+    public static void i(@NotNull final String msg, @Nullable final Throwable ex, @Nullable final Object... params) {
         records.add(new Record(Level.INFO, msg, ex, params));
     }
 
+    /**
+     * Logs a warning message.
+     *
+     * @param msg    the message
+     * @param params optional parameters for formatting the message
+     */
     public static void w(@NotNull final String msg, @NotNull final Object... params) {
         records.add(new Record(Level.WARNING, msg, null, params));
     }
 
-    public static void w(@NotNull final String msg, @Nullable final Throwable ex, @NotNull final Object... params) {
+    /**
+     * Logs a warning message.
+     *
+     * @param msg    the message
+     * @param ex     the throwable related to the message, or {@code null}
+     * @param params optional parameters for formatting the message
+     */
+    public static void w(@NotNull final String msg, @Nullable final Throwable ex, @Nullable final Object... params) {
         records.add(new Record(Level.WARNING, msg, ex, params));
     }
 
+    /**
+     * Enum that describes the verbosity of a log record.
+     */
     private enum Level {
         DEBUG, INFO, WARNING, ERROR,
     }
 
-    private static class LogThread extends Thread {
+    /**
+     * Daemon thread implementation that takes added log records and posts
+     * them.
+     */
+    private static final class LogThread extends Thread {
 
         LogThread() {
             super(Thread.currentThread().getThreadGroup(), (Runnable) null);
@@ -95,40 +172,88 @@ public final class Log {
         }
     }
 
-    private static class Record {
+    /**
+     * Data class for storing information about a log record. The string
+     * representation of a log record is not created until {@code toString()}
+     * is called.
+     */
+    private static final class Record {
 
+        /**
+         * Default date pattern. An example date would look like
+         * <pre>
+         *     23-02-09T07:51:43,476+01
+         * </pre>
+         */
         private static final String DEFAULT_DATE_PATTERN = "yy-MM-dd'T'hh:mm:ss,SSSX";
-        private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_PATTERN, Locale.ROOT);
+        /**
+         * Date formatter using the {@link #DEFAULT_DATE_PATTERN default} date
+         * pattern.
+         */
+        private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
+        /**
+         * Shared mutable string for building the string representation of log
+         * records.
+         */
+        private static final MutableString string = new MutableString(256);
 
+        /**
+         * Millisecond timestamp of when the record was created.
+         */
         private final long when;
+        /**
+         * The name of the thread this record was created on.
+         */
         @NotNull
         private final String threadName;
+        /**
+         * The level of verbosity of this record.
+         */
         @NotNull
         private final Level level;
+        /**
+         * The log message.
+         */
         @NotNull
         private final String msg;
+        /**
+         * A throwable object related to the log message, can be {@code null}.
+         */
         @Nullable
         private final Throwable ex;
+        /**
+         * An array of parameters for formatting the log message. Can be
+         * {@code null} and can also contain {@code null} elements.
+         */
         @Nullable
         private final Object[] params;
 
+        /**
+         * Creates a new log record.
+         *
+         * @throws NullPointerException if {@code level} or {@code msg} is
+         *                              {@code null}
+         */
         Record(@NotNull final Level level, @NotNull final String msg, @Nullable final Throwable ex,
-                @NotNull final Object... params) {
+                @Nullable final Object... params) {
             this.level = Objects.requireNonNull(level, "level is null");
             this.msg = Objects.requireNonNull(msg, "msg is null");
             this.ex = ex;
-            this.params = Objects.requireNonNull(params, "params is null");
+            this.params = params;
             when = System.currentTimeMillis();
             threadName = '[' + Thread.currentThread().getName() + ']';
         }
 
+        /**
+         * Creates and returns a string representation of this log record.
+         */
         @Contract(value = "-> new", pure = true)
         @NotNull
         @Override
         public String toString() {
-            synchronized (buffer) {
+            synchronized (string) {
 
-                buffer.add(dateFormat.format(when))
+                string.add(dateFormat.format(when))
                         .append(' ')
                         .add(threadName)
                         .append(' ')
@@ -136,16 +261,16 @@ public final class Log {
                         .append(' ');
 
                 if (params != null)
-                    buffer.add(String.format(Locale.ROOT, msg, params));
+                    string.add(new Formatter((Locale) null).format(msg, params));
                 else
-                    buffer.add(msg);
+                    string.add(msg);
 
                 if (ex != null)
-                    buffer.add(ex.toString());
+                    string.add(ex.toString());
 
-                final String rv = buffer.toString();
-                buffer.clear();
-                return rv;
+                final String s = string.toString();
+                string.clear();
+                return s;
             }
         }
     }
