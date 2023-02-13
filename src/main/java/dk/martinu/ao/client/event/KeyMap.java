@@ -60,7 +60,7 @@ public final class KeyMap {
      */
     private static int hash(final int keyCode) {
         final int h;
-        return (h = keyCode * 31) ^ h >>> 16;
+        return (h = keyCode * 31) ^ (h >>> 16);
     }
 
     /**
