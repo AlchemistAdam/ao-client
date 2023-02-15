@@ -147,6 +147,7 @@ public final class KeyMap {
     public KeyActionList getList(final int keyCode) {
         final KeyActionList[] bucket = table[hash(keyCode) & (table.length - 1)];
         if (bucket != null)
+            // TODO this search could be optimized if lists were sorted by key code
             for (final KeyActionList list : bucket)
                 if (list.keyCode == keyCode)
                     return list;
@@ -158,13 +159,13 @@ public final class KeyMap {
      * the map for the specified key code. All actions inserted with the same
      * key code will be stored in the same list.
      *
-     * @param action  the action to store
      * @param keyCode the key code to identify the list that will store the
      *                action
+     * @param action  the action to store
      * @throws NullPointerException if {@code action} is {@code null}
      * @see #getList(int)
      */
-    public void insert(@NotNull final KeyAction action, final int keyCode) {
+    public void put(final int keyCode, @NotNull final KeyAction action) {
         Objects.requireNonNull(action, "action is null");
         if (++size > max)
             resize();
@@ -174,6 +175,7 @@ public final class KeyMap {
         // bucket already exists
         if (bucket != null) {
             // add action to list if it exists
+            // TODO this search could be optimized if lists were sorted by key code
             for (final KeyActionList list : bucket) {
                 if (list.keyCode == keyCode) {
                     list.add(action);
