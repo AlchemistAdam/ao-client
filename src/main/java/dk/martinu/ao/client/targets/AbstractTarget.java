@@ -92,24 +92,25 @@ public abstract class AbstractTarget implements Target {
      * target. Multiple key actions bound to the same key code are sorted by
      * their {@link KeyAction#priority priority} in descending order.
      *
-     * @param keyAction the key action to bind
      * @param keyCode   the key code to bind to
+     * @param keyAction the key action to bind
      * @throws NullPointerException if {@code keyAction} is {@code null}
      * @see KeyActionList
      * @see KeyInput
      * @see KeyInputBuffer#processInput()
      */
-    public void bindKey(@NotNull final KeyAction keyAction, final int keyCode) {
+    public void bindKey(final int keyCode, @NotNull final KeyAction keyAction) {
         Objects.requireNonNull(keyAction, "keyAction is null");
         if ((keyAction.getMask() & KEY_PRESSED) != 0)
-            keyActionsPressed.insert(keyAction, keyCode);
+            keyActionsPressed.put(keyCode, keyAction);
         if ((keyAction.getMask() & KEY_RELEASED) != 0)
-            keyActionsReleased.insert(keyAction, keyCode);
+            keyActionsReleased.put(keyCode, keyAction);
     }
 
     /**
+     * DOC
      * Binds the specified key action to multiple key codes. See
-     * {@link #bindKey(KeyAction, int)} for details.
+     * {@link #bindKey(int, KeyAction)} for details.
      *
      * @throws NullPointerException     if {@code keyAction} or {@code keyCodes} is
      *                                  {@code null}
@@ -121,7 +122,7 @@ public abstract class AbstractTarget implements Target {
         if (keyCodes.length == 0)
             throw new IllegalArgumentException("KeyCodes is empty");
         for (int keyCode : keyCodes)
-            bindKey(keyAction, keyCode);
+            bindKey(keyCode, keyAction);
     }
 
     /**
@@ -132,7 +133,7 @@ public abstract class AbstractTarget implements Target {
      * {@link KeyInputBuffer} for later processing.
      *
      * @param event the event to be processed
-     * @see #bindKey(KeyAction, int)
+     * @see #bindKey(int, KeyAction)
      * @see KeyActionList#mapToInput(KeyEvent)
      * @see KeyInputBuffer#processInput()
      */
@@ -151,7 +152,7 @@ public abstract class AbstractTarget implements Target {
      * {@link KeyInputBuffer} for later processing.
      *
      * @param event the event to be processed
-     * @see #bindKey(KeyAction, int)
+     * @see #bindKey(int, KeyAction)
      * @see KeyActionList#mapToInput(KeyEvent)
      * @see KeyInputBuffer#processInput()
      */
@@ -267,5 +268,8 @@ public abstract class AbstractTarget implements Target {
 //        timer.measure();
     }
 
+    /**
+     * Initializes the key bindings for this target.
+     */
     protected abstract void initKeyBindings();
 }

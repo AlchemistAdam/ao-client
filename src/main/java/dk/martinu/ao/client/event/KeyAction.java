@@ -32,7 +32,7 @@ import dk.martinu.ao.client.targets.AbstractTarget;
  *
  * @author Adam Martinu
  * @version 1.0, 2023-02-05
- * @see AbstractTarget#bindKey(KeyAction, int)
+ * @see AbstractTarget#bindKey(int, KeyAction)
  * @since 1.0
  */
 public abstract class KeyAction implements Comparable<KeyAction> {
