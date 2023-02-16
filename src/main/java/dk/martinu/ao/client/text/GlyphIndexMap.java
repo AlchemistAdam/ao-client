@@ -177,11 +177,37 @@ final class GlyphIndexMap {
     private int size = 0;
 
     /**
+     * Returns the glyph index for the specified character, or {@code -1} if no
+     * index was found.
+     */
+    int getIndex(final char c) {
+        Entry entry = table[Glyph.hash(c) & (table.length - 1)];
+        if (entry != null) {
+            // entry character
+            char ec;
+            do {
+                ec = entry.chars[0];
+                if (ec < c)
+                    entry = entry.next;
+                else if (ec == c && entry.chars.length == 1)
+                    return entry.index;
+                else
+                    break;
+            }
+            while (entry != null);
+        }
+        return -1;
+    }
+
+    /**
      * Returns the glyph index for the specified array of characters, or
-     * {@code -1} if on index was found.
+     * {@code -1} if no index was found.
      */
     @Contract(value = "null -> fail", pure = true)
     int getIndex(final char[] chars) {
+        if (chars.length == 1)
+            return getIndex(chars[0]);
+
         Entry entry = table[Glyph.hash(chars) & (table.length - 1)];
         // TODO Lookup could be faster if entries stored a sum value used for
         //  comparisons and were sorted by sum value.
@@ -190,40 +216,23 @@ final class GlyphIndexMap {
         if (entry != null) {
             // entry character
             char ec;
-            // glyph represents a single character
-            if (chars.length == 1) {
-                final char c = chars[0];
-                do {
-                    ec = entry.chars[0];
-                    if (ec < c)
+            // ligature index
+            int li = 0;
+            do {
+                if (li < entry.chars.length) {
+                    ec = entry.chars[li];
+                    if (ec < chars[li])
                         entry = entry.next;
-                    else if (ec == c && entry.chars.length == 1)
-                        return entry.index;
+                    else if (ec == chars[li] && entry.chars.length <= chars.length)
+                        if (entry.chars.length < chars.length)
+                            li++;
+                        else
+                            return entry.index;
                     else
                         break;
                 }
-                while (entry != null);
             }
-            // glyph represents a ligature
-            else {
-                // ligature index
-                int li = 0;
-                do {
-                    if (li < entry.chars.length) {
-                        ec = entry.chars[li];
-                        if (ec < chars[li])
-                            entry = entry.next;
-                        else if (ec == chars[li] && entry.chars.length <= chars.length)
-                            if (entry.chars.length < chars.length)
-                                li++;
-                            else
-                                return entry.index;
-                        else
-                            break;
-                    }
-                }
-                while (entry != null);
-            }
+            while (entry != null);
         }
         return -1;
     }
