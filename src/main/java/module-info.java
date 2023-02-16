@@ -27,4 +27,5 @@ module dk.martinu.ao.client {
     exports dk.martinu.ao.client.ui;
     exports dk.martinu.ao.client.util;
     exports dk.martinu.ao.client.targets;
+    exports dk.martinu.ao.client.text;
 }
