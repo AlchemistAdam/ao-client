@@ -28,7 +28,7 @@ public class KeyActionListTest {
         for (int i = 1; i < n_actions; i++)
             list.add(actions[i]);
 
-        final KeyAction[] listActions = list.new Handle().actions();
+        final KeyAction[] listActions = list.actions();
         int priority = listActions[0].priority;
         for (int i = 1; i < n_actions; i++) {
             assertTrue(priority >= listActions[i].priority);

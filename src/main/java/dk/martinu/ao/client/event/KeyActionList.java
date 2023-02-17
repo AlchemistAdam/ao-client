@@ -64,6 +64,10 @@ public final class KeyActionList {
         actions = new KeyAction[] {action};
     }
 
+    public KeyAction[] actions() {
+        return actions;
+    }
+
     /**
      * Adds the specified key action to this list.
      *
