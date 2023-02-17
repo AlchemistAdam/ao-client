@@ -79,7 +79,7 @@ public class KeyMapTest {
         final int AZ_MAX = 'Z' - 'A';
         final KeyMap map = new KeyMap();
         for (KeyAction action : actions)
-            map.insert(action, r.nextInt(AZ_MAX) + 0x41); // 0x41 == VK_A
+            map.put(r.nextInt(AZ_MAX) + 0x41, action); // 0x41 == VK_A
 
         return map;
     }
