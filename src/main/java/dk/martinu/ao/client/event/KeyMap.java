@@ -46,6 +46,7 @@ public final class KeyMap {
      * @return a new bucket containing all lists in {@code bucket} and
      * {@code list}
      */
+    // TODO rename method when buckets are sorted
     private static KeyActionList[] appendListToBucket(final KeyActionList[] bucket,
             @NotNull final KeyActionList list) {
         final KeyActionList[] newBucket = new KeyActionList[bucket.length + 1];
@@ -58,20 +59,22 @@ public final class KeyMap {
     /**
      * Returns a hash code for the specified key code.
      */
+    @Contract(pure = true)
     private static int hash(final int keyCode) {
         final int h;
         return (h = keyCode * 31) ^ (h >>> 16);
     }
 
     /**
-     * Inserts the specified bucket into the specified table.
+     * Inserts the contents of specified bucket into the specified table.
      * <p>
      * If {@code bucket} contains only a single list, then the bucket will be
      * reused if the position in the table is empty. Otherwise, the list will
      * be appended to the bucket at that position. If {@code bucket} contains
      * multiple lists, then each list is inserted separately into the table.
      * <p>
-     * <b>NOTE:</b> this method discards all elements in {@code bucket}.
+     * <b>NOTE:</b> this method discards all elements in {@code bucket} if it
+     * is not reused.
      *
      * @param table  the table to insert into
      * @param bucket the bucket to insert
@@ -194,18 +197,12 @@ public final class KeyMap {
      * Doubles the capacity of the map and rehashes all buckets.
      */
     private void resize() {
-        // create new table with double size
         final KeyActionList[][] newTable = new KeyActionList[table.length << 1][];
-
-        // transfer buckets into new table
-        for (int i = 0; i < table.length; i++) {
+        for (int i = 0; i < table.length; i++)
             if (table[i] != null) {
                 insertBucketIntoTable(newTable, table[i]);
                 table[i] = null;
             }
-        }
-
-        // assign new table and threshold
         table = newTable;
         max = (int) (table.length * loadFactor);
     }
