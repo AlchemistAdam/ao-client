@@ -42,9 +42,8 @@ public class KeyMapTest {
     })
     void capacity(final int n_actions, final int prio_max) {
         final KeyMap map = createMap(n_actions, prio_max);
-        final KeyMap.Handle handle = map.new Handle();
-        assertEquals(1, Integer.bitCount(handle.table().length));
-        assertEquals(0, handle.table().length & 1);
+        assertEquals(1, Integer.bitCount(map.table().length));
+        assertEquals(0, map.table().length & 1);
     }
 
     @DisplayName("has correct max")
@@ -59,11 +58,10 @@ public class KeyMapTest {
     })
     void max(final int n_actions, final int prio_max) {
         final KeyMap map = createMap(n_actions, prio_max);
-        final KeyMap.Handle handle = map.new Handle();
-        int max = (int) (handle.table().length * handle.loadFactor());
+        int max = (int) (map.table().length * map.loadFactor());
         while (max < n_actions)
             max <<= 1;
-        assertEquals(max, handle.max());
+        assertEquals(max, map.max());
     }
 
     @DisplayName("has correct size")
@@ -78,7 +76,7 @@ public class KeyMapTest {
     })
     void size(final int n_actions, final int prio_max) {
         final KeyMap map = createMap(n_actions, prio_max);
-        assertEquals(n_actions, map.new Handle().size());
+        assertEquals(n_actions, map.size());
     }
 
     @Contract(value = "_, _ -> new", pure = true)

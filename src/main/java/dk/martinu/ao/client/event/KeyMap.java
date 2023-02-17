@@ -142,6 +142,14 @@ public final class KeyMap {
      */
     private int size = 0;
 
+    public int collisions() {
+        int n = 0;
+        for (KeyActionList[] bucket : table)
+            if (bucket != null && bucket.length > 1)
+                n++;
+        return n;
+    }
+
     /**
      * Returns the list for the specified key code, or {@code null}.
      */
@@ -155,6 +163,14 @@ public final class KeyMap {
                 if (list.keyCode == keyCode)
                     return list;
         return null;
+    }
+
+    public float loadFactor() {
+        return loadFactor;
+    }
+
+    public int max() {
+        return max;
     }
 
     /**
@@ -193,6 +209,15 @@ public final class KeyMap {
             table[hash] = new KeyActionList[] {new KeyActionList(keyCode, action)};
     }
 
+    // TODO remove if size is exposed
+    public int size() {
+        return size;
+    }
+
+    public KeyActionList[][] table() {
+        return table;
+    }
+
     /**
      * Doubles the capacity of the map and rehashes all buckets.
      */
@@ -205,51 +230,5 @@ public final class KeyMap {
             }
         table = newTable;
         max = (int) (table.length * loadFactor);
-    }
-
-    /**
-     * Debug key map handle used in JUnit tests.
-     */
-    public class Handle {
-
-        /**
-         * Counts and returns the number of collisions in the key map.
-         */
-        public int collisions() {
-            int n = 0;
-            for (KeyActionList[] bucket : table)
-                if (bucket != null && bucket.length > 1)
-                    n++;
-            return n;
-        }
-
-        /**
-         * @see KeyMap#loadFactor
-         */
-        public float loadFactor() {
-            return loadFactor;
-        }
-
-        /**
-         * @see KeyMap#max
-         */
-        public int max() {
-            return max;
-        }
-
-        /**
-         * @see KeyMap#size
-         */
-        // TODO remove if size is exposed in enclosing class
-        public int size() {
-            return size;
-        }
-
-        /**
-         * @see KeyMap#table
-         */
-        public KeyActionList[][] table() {
-            return table;
-        }
     }
 }
