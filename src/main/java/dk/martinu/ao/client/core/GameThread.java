@@ -141,7 +141,7 @@ public final class GameThread extends Thread {
             if (time >= logicTickMs) {
 
                 target = getTarget();
-                r = frame.getResolution();
+                r = frame.resolution;
 
                 if (printPerformance) {
                     // logic timestamp
