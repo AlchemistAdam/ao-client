@@ -26,7 +26,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 import dk.martinu.ao.client.util.Log;
-import dk.martinu.ao.client.ZUtil;
+import dk.martinu.ao.client.util.ZUtil;
 import dk.martinu.ao.client.targets.Target;
 import dk.martinu.ao.client.util.Resolution;
 import dk.martinu.kofi.Document;
