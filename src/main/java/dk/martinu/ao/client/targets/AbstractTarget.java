@@ -23,7 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.util.Objects;
 
-import dk.martinu.ao.client.Timer;
+import dk.martinu.ao.client.util.Timer;
 import dk.martinu.ao.client.core.GameThread;
 import dk.martinu.ao.client.event.*;
 import dk.martinu.ao.client.util.Resolution;
