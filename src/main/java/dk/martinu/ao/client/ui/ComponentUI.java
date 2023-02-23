@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.Graphics2D;
 
-import dk.martinu.ao.client.Sound;
+import dk.martinu.ao.client.util.Sound;
 
 public interface ComponentUI {
 

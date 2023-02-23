@@ -26,7 +26,7 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import dk.martinu.ao.client.Sound;
+import dk.martinu.ao.client.util.Sound;
 import dk.martinu.ao.client.targets.Target;
 
 public class Component {
