@@ -1,7 +1,5 @@
 package dk.martinu.ao.client.util;
 
-import dk.martinu.ao.client.SoundListener;
-
 public interface Sound {
 
     void addListener(final SoundListener listener);
