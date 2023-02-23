@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import dk.martinu.ao.client.ZUtil;
+import dk.martinu.ao.client.util.ZUtil;
 
 public class Spinner<E> extends Container {
 
