@@ -80,7 +80,7 @@ public class Glyph {
      * @param chars the character(s)
      */
     Glyph(final int width, final char[] chars) {
-        this(width, 0, 0, true, chars, null, null);
+        this(true, width, 0, chars, 0, null, null);
     }
 
     /**
@@ -88,31 +88,30 @@ public class Glyph {
      *
      * @param width   the width
      * @param height  the height
-     * @param offsetY the vertical offset
      * @param chars   the character(s)
-     * @param data    the image data (alpha values)
+     * @param offsetY the vertical offset
      * @param offsetX horizontal offsets relative to other glyphs
+     * @param data    the image data (alpha values)
      */
-    Glyph(final int width, final int height, final int offsetY, final char[] chars, final byte[] data,
-            final int[] offsetX) {
-        this(width, height, offsetY, false, chars, data, offsetX);
+    Glyph(final int width, final int height, final char[] chars, final int offsetY, final int[] offsetX, final byte[] data) {
+        this(false, width, height, chars, offsetY, offsetX, data);
     }
 
     /**
      * private constructor.
      *
      * @see #Glyph(int, char[])
-     * @see #Glyph(int, int, int, char[], byte[], int[])
+     * @see #Glyph(int, int, char[], int, int[], byte[])
      */
-    private Glyph(final int width, final int height, final int offsetY, final boolean isWhitespace, final char[] chars,
-            final byte[] data, final int[] offsetX) {
+    Glyph(final boolean isWhitespace, final int width, final int height, final char[] chars, final int offsetY, final int[] offsetX,
+            final byte[] data) {
+        this.isWhitespace = isWhitespace;
         this.width = width;
         this.height = height;
-        this.offsetY = offsetY;
-        this.isWhitespace = isWhitespace;
         this.chars = chars;
-        this.data = data;
+        this.offsetY = offsetY;
         this.offsetX = offsetX;
+        this.data = data;
         hash = hash(chars);
     }
 
