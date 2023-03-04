@@ -51,6 +51,17 @@ public class Font {
         }
     }
 
+    @Contract(pure = true)
+    @NotNull
+    public Glyph getGlyph(final int index) {
+        return glyphs[index];
+    }
+
+    @Contract(pure = true)
+    public int getGlyphCount() {
+        return glyphs.length;
+    }
+
     public int[] getGlyphIndices(@NotNull final String s) {
         // TODO this will never return ligature glyphs
         final char[] chars = s.toCharArray();
@@ -178,7 +189,7 @@ public class Font {
      * @return the total width of the {@code Glyphs}
      * @throws NullPointerException     if {@code ids} is {@code null}
      * @throws IllegalArgumentException if {@code ids} is empty
-     * @see #getGlyphIndices(String) 
+     * @see #getGlyphIndices(String)
      */
     // TEST
     @Contract(value = "null -> fail", pure = true)
