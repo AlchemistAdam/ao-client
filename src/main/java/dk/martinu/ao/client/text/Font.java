@@ -40,7 +40,7 @@ public class Font {
     @NotNull
     final GlyphIndexMap map = new GlyphIndexMap();
 
-    private Font(final int height, @NotNull final Glyph[] glyphs) {
+    Font(final int height, @NotNull final Glyph[] glyphs) {
         if (height <= 0)
             throw new IllegalArgumentException("font height must be greater than 0");
         this.height = height;
