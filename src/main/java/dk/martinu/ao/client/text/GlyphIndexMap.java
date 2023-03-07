@@ -18,9 +18,6 @@ package dk.martinu.ao.client.text;
 
 import org.jetbrains.annotations.*;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * Hash map implementation used by {@link Font fonts} for storing and
  * retrieving {@link Glyph} indices.
@@ -52,7 +49,7 @@ final class GlyphIndexMap {
     private static void addBucketToTable(final Entry[] table, @NotNull final Entry bucket) {
         // attempt to reuse single element buckets
         if (bucket.next == null) {
-            final int hash = Glyph.hash(bucket.chars) & (table.length - 1);
+            final int hash = Glyph.hash(bucket.value) & (table.length - 1);
             if (table[hash] != null)
                 table[hash] = addEntryToBucket(table[hash], bucket);
             else
@@ -65,7 +62,7 @@ final class GlyphIndexMap {
             int hash;
             do {
                 next = entry.next;
-                hash = Glyph.hash(entry.chars) & (table.length - 1);
+                hash = Glyph.hash(entry.value) & (table.length - 1);
                 if (table[hash] != null)
                     table[hash] = addEntryToBucket(table[hash], entry);
                 else {
@@ -95,14 +92,11 @@ final class GlyphIndexMap {
         // last iterated entry
         Entry last = null;
 
-        // cursor character
-        char cc;
-        // glyph represents a single character
-        if (entry.chars.length == 1) {
-            final char c = entry.chars[0];
+        // determine entry position in bucket
+        {
             do {
-                cc = cursor.chars[0];
-                if (cc < c) {
+                char val = cursor.value;
+                if (val < entry.value) {
                     last = cursor;
                     cursor = cursor.next;
                 }
@@ -111,32 +105,10 @@ final class GlyphIndexMap {
             }
             while (cursor != null);
         }
-        // glyph represents a ligature
-        else {
-            // ligature index
-            int li = 0;
-            do {
-                if (li < cursor.chars.length) {
-                    cc = cursor.chars[li];
-                    if (cc < entry.chars[li]) {
-                        last = cursor;
-                        cursor = cursor.next;
-                    }
-                    else if (cc == entry.chars[li] && cursor.chars.length <= entry.chars.length)
-                        if (cursor.chars.length < entry.chars.length)
-                            li++;
-                        else
-                            break;
-                    else
-                        break;
-                }
-            }
-            while (cursor != null);
-        }
 
         // entry becomes new first link in bucket
         if (last == null) {
-            if (Arrays.equals(cursor.chars, entry.chars))
+            if (cursor.value == entry.value)
                 entry.next = cursor.next;
             else
                 entry.next = cursor;
@@ -145,7 +117,7 @@ final class GlyphIndexMap {
         // bucket retains first entry link
         else {
             last.next = entry;
-            if (cursor != null && Arrays.equals(cursor.chars, entry.chars))
+            if (cursor != null && cursor.value == entry.value)
                 entry.next = cursor.next;
             else
                 entry.next = cursor;
@@ -180,16 +152,17 @@ final class GlyphIndexMap {
      * Returns the glyph index for the specified character, or {@code -1} if no
      * index was found.
      */
+    @Contract(pure = true)
     int getIndex(final char c) {
         Entry entry = table[Glyph.hash(c) & (table.length - 1)];
         if (entry != null) {
             // entry character
             char ec;
             do {
-                ec = entry.chars[0];
+                ec = entry.value;
                 if (ec < c)
                     entry = entry.next;
-                else if (ec == c && entry.chars.length == 1)
+                else if (ec == c)
                     return entry.index;
                 else
                     break;
@@ -200,68 +173,28 @@ final class GlyphIndexMap {
     }
 
     /**
-     * Returns the glyph index for the specified array of characters, or
-     * {@code -1} if no index was found.
-     */
-    @Contract(value = "null -> fail", pure = true)
-    int getIndex(final char[] chars) {
-        if (chars.length == 1)
-            return getIndex(chars[0]);
-
-        Entry entry = table[Glyph.hash(chars) & (table.length - 1)];
-        // TODO Lookup could be faster if entries stored a sum value used for
-        //  comparisons and were sorted by sum value.
-        //  Only implement if/when many glyphs are stored and several buckets
-        //  have multiple collisions, as each entry will allocate 32 more bytes.
-        if (entry != null) {
-            // entry character
-            char ec;
-            // ligature index
-            int li = 0;
-            do {
-                if (li < entry.chars.length) {
-                    ec = entry.chars[li];
-                    if (ec < chars[li])
-                        entry = entry.next;
-                    else if (ec == chars[li] && entry.chars.length <= chars.length)
-                        if (entry.chars.length < chars.length)
-                            li++;
-                        else
-                            return entry.index;
-                    else
-                        break;
-                }
-            }
-            while (entry != null);
-        }
-        return -1;
-    }
-
-    /**
      * Stores the specified index for a glyph that represents the specified
-     * characters.
+     * character.
      *
-     * @param chars the characters (key) to identify the glyph index
+     * @param value the character (key) to identify the glyph index
      * @param index the glyph index to store
-     * @throws NullPointerException     if {@code chars} is {@code null}
      * @throws IllegalArgumentException if {@code index < 0}
-     * @see #getIndex(char[])
+     * @see #getIndex(char)
      */
-    @Contract(value = "null, _ -> fail", pure = true)
-    void putIndex(final char[] chars, final int index) {
-        Objects.requireNonNull(chars, "chars array is null");
+    @Contract(pure = true)
+    void putIndex(final char value, final int index) {
         if (index < 0)
             throw new IllegalArgumentException("index is less than 0");
 
         if (++size > max)
             resize();
 
-        final int hash = Glyph.hash(chars) & (table.length - 1);
+        final int hash = Glyph.hash(value) & (table.length - 1);
         final Entry entry = table[hash];
         if (entry != null)
-            table[hash] = addEntryToBucket(entry, new Entry(chars, index));
+            table[hash] = addEntryToBucket(entry, new Entry(value, index));
         else
-            table[hash] = new Entry(chars, index);
+            table[hash] = new Entry(value, index);
     }
 
     /**
@@ -284,7 +217,7 @@ final class GlyphIndexMap {
      * Entry links are sorted numerically in ascending order, per index.
      * For example, a bucket of entries might be sorted as:
      * <pre>
-     *     "a", "ab", "ac", "ca", "cb", "cd", "d"
+     *     "a", "c", "d"
      * </pre>
      * While it looks like lexicographical ordering, it is not; a character
      * such as {@code 'X'} has a lower value (and therefore precedes) the
@@ -298,15 +231,15 @@ final class GlyphIndexMap {
         /**
          * The entry key.
          * <p>
-         * The character(s) represented by the glyph that has the index stored in
+         * The character represented by the glyph that has the index stored in
          * this entry.
          */
-        final char[] chars;
+        final char value;
         /**
          * The entry value.
          * <p>
          * The index used to get the glyph that represents this entry's key
-         * ({@link #chars}).
+         * ({@link #value}).
          */
         final int index;
         /**
@@ -320,15 +253,15 @@ final class GlyphIndexMap {
         Entry next = null;
 
         /**
-         * Constructs a new entry with the specified characters and glyph
+         * Constructs a new entry with the specified character and glyph
          * index.
          *
-         * @param chars the entry key
+         * @param value the entry key
          * @param index the entry value
          */
         @Contract(pure = true)
-        Entry(final char[] chars, final int index) {
-            this.chars = chars;
+        Entry(final char value, final int index) {
+            this.value = value;
             this.index = index;
         }
     }

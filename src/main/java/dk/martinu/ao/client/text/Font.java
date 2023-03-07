@@ -47,7 +47,7 @@ public class Font {
         this.glyphs = Objects.requireNonNull(glyphs, "glyphs array is null");
         for (int i = 0; i < glyphs.length; i++) {
             Glyph glyph = Objects.requireNonNull(glyphs[i], "glyphs array contains null elements");
-            map.putIndex(glyph.chars, i);
+            map.putIndex(glyph.value, i);
         }
     }
 
@@ -63,7 +63,6 @@ public class Font {
     }
 
     public int[] getGlyphIndices(@NotNull final String s) {
-        // TODO this will never return ligature glyphs
         final char[] chars = s.toCharArray();
         int[] ints = new int[chars.length];
         for (int i = 0; i < chars.length; i++) {
@@ -133,7 +132,7 @@ public class Font {
     public BufferedImage getImage(final int[] ids, final int maxWidth, final int maxLines) {
         Objects.requireNonNull(ids, "ids array is null");
         if (ids.length == 0)
-            throw new IllegalArgumentException("empty ids array");
+            throw new IllegalArgumentException("ids array is empty");
 
         // variables for iterating IDs
         int id0 = ids[0];

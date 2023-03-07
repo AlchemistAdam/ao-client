@@ -111,25 +111,12 @@ public class FontCodec {
                     throw new FontFormatException(pos, "invalid height");
                 pos += n;
 
-
-                // char count
-                n = in.readNBytes(iBuffer, 0, INT);
-                if (n != INT)
-                    throw new FontFormatException(pos, "missing character count");
-                final int charCount = getInt(iBuffer);
-                if (charCount < 0)
-                    throw new FontFormatException(pos, "invalid character count");
+                // read char
+                n = in.readNBytes(cBuffer, 0, CHAR);
+                if (n != CHAR)
+                    throw new FontFormatException(pos, "missing character");
+                final char value = getChar(cBuffer);
                 pos += n;
-
-                // read chars
-                final char[] chars = new char[charCount];
-                for (int j = 0; j < charCount; j++) {
-                    n = in.readNBytes(cBuffer, 0, CHAR);
-                    if (n != INT)
-                        throw new FontFormatException(pos, "missing character");
-                    chars[j] = getChar(cBuffer);
-                    pos += n;
-                }
 
 
                 // offsetY
@@ -182,7 +169,7 @@ public class FontCodec {
                 pos += n;
 
 
-                glyphs[i] = new Glyph(isWhitespace, width, height, chars, offsetY, offsetX, data);
+                glyphs[i] = new Glyph(isWhitespace, width, height, value, offsetY, offsetX, data);
             }
         }
 
