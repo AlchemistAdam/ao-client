@@ -42,12 +42,12 @@ public class Glyph {
      * The image data (alpha values) of the glyph. Will be {@code null} if the
      * glyph is whitespace.
      */
-    final byte[] data;
+    public final byte[] data;
     /**
      * Horizontal offsets of the glyph relative to other glyphs. Will be
      * {@code null} if the glyph is whitespace.
      */
-    final int[] offsetX;
+    public final int[] offsetX;
 
     /**
      * Cached hash code.
