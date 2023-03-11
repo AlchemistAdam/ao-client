@@ -45,6 +45,7 @@ public class UITarget extends AbstractTarget {
 
     @Override
     public void paint(@NotNull final Graphics2D g, @NotNull final Resolution r) {
+        super.paint(g, r);
         if (scene != null)
             scene.paint(g, r);
     }
@@ -56,6 +57,16 @@ public class UITarget extends AbstractTarget {
             this.scene.setPressedComponent(null);
         }
         this.scene = scene;
+    }
+
+    @Override
+    public void keyTyped(@NotNull final KeyEvent event) {
+        super.keyTyped(event);
+        if (scene != null) {
+            final Component focus = scene.getFocusedComponent();
+            if (focus instanceof Text text)
+                text.onKeyTyped(event);
+        }
     }
 
     @Nullable
