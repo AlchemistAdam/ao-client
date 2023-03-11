@@ -26,8 +26,8 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import dk.martinu.ao.client.util.Sound;
 import dk.martinu.ao.client.targets.Target;
+import dk.martinu.ao.client.util.Sound;
 
 public class Component {
 
@@ -58,7 +58,7 @@ public class Component {
     protected int width = 0;
     protected int height = 0;
     @Nullable
-    protected ComponentUI ui;
+    protected Delegate ui;
     // flags that determine how the component is painted and interacted with
     protected boolean visible = true;
     protected boolean enabled = true;
@@ -83,7 +83,7 @@ public class Component {
         this(null);
     }
 
-    public Component(final ComponentUI ui) {
+    public Component(final Delegate ui) {
         setComponentUI(ui);
     }
 
@@ -111,7 +111,7 @@ public class Component {
     }
 
     @Nullable
-    public ComponentUI getComponentUI() {
+    public Delegate getComponentUI() {
         return ui;
     }
 
@@ -210,7 +210,7 @@ public class Component {
         return actions.remove(Objects.requireNonNull(action, "action is null"));
     }
 
-    public void setComponentUI(@Nullable final ComponentUI ui) {
+    public void setComponentUI(@Nullable final Delegate ui) {
         if (this.ui != null)
             this.ui.uninstallComponent(this);
         if ((this.ui = ui) != null)

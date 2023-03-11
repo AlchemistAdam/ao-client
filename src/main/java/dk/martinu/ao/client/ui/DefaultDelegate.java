@@ -23,15 +23,15 @@ import java.awt.*;
 
 import dk.martinu.ao.client.util.Sound;
 
-public class DefaultComponentUI implements ComponentUI {
+public class DefaultDelegate implements Delegate {
 
-    private static @Nullable DefaultComponentUI instance = null;
+    private static @Nullable DefaultDelegate instance = null;
 
-    public static @Nullable ComponentUI getInstance() {
+    public static @Nullable Delegate getInstance() {
         if (instance == null)
-            synchronized (DefaultComponentUI.class) {
+            synchronized (DefaultDelegate.class) {
                 if (instance == null)
-                    instance = new DefaultComponentUI();
+                    instance = new DefaultDelegate();
             }
         return instance;
     }
@@ -46,34 +46,34 @@ public class DefaultComponentUI implements ComponentUI {
     public int borderThickness = 1;
     public Font font = Font.decode("Arial BOLD 12");
 
-    private DefaultComponentUI() { }
+    private DefaultDelegate() { }
 
-    public @NotNull DefaultComponentUI background(final Color background) {
+    public @NotNull DefaultDelegate background(final Color background) {
         this.background = background;
         return this;
     }
 
-    public @NotNull DefaultComponentUI border(final Color border) {
+    public @NotNull DefaultDelegate border(final Color border) {
         this.border = border;
         return this;
     }
 
-    public @NotNull DefaultComponentUI borderThickness(final int borderThickness) {
+    public @NotNull DefaultDelegate borderThickness(final int borderThickness) {
         this.borderThickness = borderThickness;
         return this;
     }
 
-    public @NotNull DefaultComponentUI focus(final Color focus) {
+    public @NotNull DefaultDelegate focus(final Color focus) {
         this.focus = focus;
         return this;
     }
 
-    public @NotNull DefaultComponentUI font(final Font font) {
+    public @NotNull DefaultDelegate font(final Font font) {
         this.font = font;
         return this;
     }
 
-    public @NotNull DefaultComponentUI foreground(final Color foreground) {
+    public @NotNull DefaultDelegate foreground(final Color foreground) {
         this.foreground = foreground;
         return this;
     }
@@ -88,7 +88,7 @@ public class DefaultComponentUI implements ComponentUI {
 
     }
 
-    public @NotNull DefaultComponentUI mouseover(final Color mouseover) {
+    public @NotNull DefaultDelegate mouseover(final Color mouseover) {
         this.mouseover = mouseover;
         return this;
     }
@@ -185,7 +185,7 @@ public class DefaultComponentUI implements ComponentUI {
         }
     }
 
-    public @NotNull DefaultComponentUI pressed(final Color pressed) {
+    public @NotNull DefaultDelegate pressed(final Color pressed) {
         this.pressed = pressed;
         return this;
     }

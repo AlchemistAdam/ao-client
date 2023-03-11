@@ -29,7 +29,7 @@ public class Login extends UITarget {
     }
 
     void initUiComponents() {
-        final ComponentUI componentUI = DefaultComponentUI.getInstance();
+        final Delegate delegate = DefaultDelegate.getInstance();
         final Size sizeButton = new Size(250, 30);
 
         final Scene main = new Scene();
@@ -44,21 +44,21 @@ public class Login extends UITarget {
 
         }));
         bNewGame.setSize(sizeButton);
-        bNewGame.setComponentUI(componentUI);
+        bNewGame.setComponentUI(delegate);
         bNewGame.setFocusTraverseV(bExit, bContinue);
 
         bContinue.setEnabled(false);
         bContinue.setSize(sizeButton);
-        bContinue.setComponentUI(componentUI);
+        bContinue.setComponentUI(delegate);
         bContinue.setFocusTraverseV(bNewGame, bOptions);
 
         bOptions.setSize(sizeButton);
-        bOptions.setComponentUI(componentUI);
+        bOptions.setComponentUI(delegate);
         bOptions.setFocusTraverseV(bContinue, bExit);
 
         bExit.addAction((src, event, c) -> thread.shutdown());
         bExit.setSize(sizeButton);
-        bExit.setComponentUI(componentUI);
+        bExit.setComponentUI(delegate);
         bExit.setFocusTraverseV(bOptions, bNewGame);
 
         main.addComponent(bNewGame);

@@ -23,7 +23,7 @@ import java.awt.Graphics2D;
 
 import dk.martinu.ao.client.util.Sound;
 
-public interface ComponentUI {
+public interface Delegate {
 
     @Nullable
     Sound getSound(final int flag, final boolean state);
