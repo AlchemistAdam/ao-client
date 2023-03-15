@@ -38,9 +38,8 @@ public class Container extends Component implements Iterable<Component> {
         components = new ArrayList<>(size);
     }
 
-    public void addComponent(@Nullable final Component component) throws UIException {
-        if (component == null)
-            throw new NullPointerException("component must not be null");
+    public void addComponent(@NotNull final Component component) throws UIException {
+        Objects.requireNonNull(component, "component must not be null");
         final List<Component> components = getComponents();
         if (components.contains(component))
             throw new UIException("component is already added");
@@ -52,9 +51,10 @@ public class Container extends Component implements Iterable<Component> {
 
     @Override
     public void forEach(@NotNull final Consumer<? super Component> action) {
-        components.forEach(action);
+        components.forEach(Objects.requireNonNull(action, "action is null"));
     }
 
+    @Contract(pure = true)
     @NotNull
     public Component getComponent(final int index) {
         final List<Component> components = getComponents();
@@ -63,6 +63,7 @@ public class Container extends Component implements Iterable<Component> {
         return components.get(index);
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getComponent(final int x, final int y) {
         for (final Component component : getComponents()) {
@@ -77,13 +78,16 @@ public class Container extends Component implements Iterable<Component> {
         return this;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getComponent(@NotNull final Point point) {
         return getComponent(point.x, point.y);
     }
 
+    @Contract(pure = true)
     @Nullable
-    public Component getComponent(final String name) {
+    public Component getComponent(@NotNull final String name) {
+        Objects.requireNonNull(name, "name is null");
         for (final Component c : getComponents()) {
             if (Objects.equals(c.getName(), name))
                 return c;
@@ -91,17 +95,19 @@ public class Container extends Component implements Iterable<Component> {
         return null;
     }
 
+    @Contract(pure = true)
     @NotNull
     public List<Component> getComponents() {
         return components;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Layout getLayout() {
         return layout;
     }
 
-    @Contract(value = "-> new")
+    @Contract(value = "-> new", pure = true)
     @NotNull
     @Override
     public ListIterator<Component> iterator() {
@@ -116,18 +122,19 @@ public class Container extends Component implements Iterable<Component> {
                 ((Container) component).layout();
     }
 
-    public void paint(final Graphics2D g) {
+    public void paint(@NotNull final Graphics2D g) {
         super.paint(g);
         // paint components
+        g.translate(x, y);
         for (final Component c : getComponents())
             if (c.isVisible())
                 c.paint(g);
+        g.translate(-x, -y);
     }
 
     public boolean removeComponent(@NotNull final Component component) {
-        if (component == null)
-            throw new NullPointerException("component must not be null");
-        final boolean wasRemoved = getComponents().remove(component);
+        final boolean wasRemoved = getComponents().remove(
+                Objects.requireNonNull(component, "component is null"));
         if (wasRemoved)
             component.setParent(null);
         return wasRemoved;
@@ -144,7 +151,8 @@ public class Container extends Component implements Iterable<Component> {
     }
 
     @Nullable
-    public Component removeComponent(final String name) {
+    public Component removeComponent(@NotNull final String name) {
+        Objects.requireNonNull(name, "name is null");
         final List<Component> components = getComponents();
         for (Component c : components)
             if (Objects.equals(c.getName(), name)) {
@@ -159,7 +167,7 @@ public class Container extends Component implements Iterable<Component> {
         this.layout = layout;
     }
 
-    @Contract(value = "-> new")
+    @Contract(value = "-> new", pure = true)
     @NotNull
     @Override
     public Spliterator<Component> spliterator() {
