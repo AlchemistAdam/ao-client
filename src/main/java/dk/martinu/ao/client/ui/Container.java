@@ -66,15 +66,12 @@ public class Container extends Component implements Iterable<Component> {
     @Contract(pure = true)
     @Nullable
     public Component getComponent(final int x, final int y) {
-        for (final Component component : getComponents()) {
-            if (component.isVisible() && component.isPositionInBounds(x, y)) {
-                if (component instanceof Container) {
-                    final Container c = (Container) component;
+        for (final Component component : getComponents())
+            if (component.isVisible() && component.isPositionInBounds(x, y))
+                if (component instanceof Container c)
                     return c.getComponent(x, y);
-                }
-                return component;
-            }
-        }
+                else
+                    return component;
         return this;
     }
 
