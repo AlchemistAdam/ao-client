@@ -16,8 +16,7 @@
  */
 package dk.martinu.ao.client.ui;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -58,7 +57,7 @@ public class Component {
     protected int width = 0;
     protected int height = 0;
     @Nullable
-    protected Delegate ui;
+    protected Delegate delegate;
     // flags that determine how the component is painted and interacted with
     protected boolean visible = true;
     protected boolean enabled = true;
@@ -83,8 +82,8 @@ public class Component {
         this(null);
     }
 
-    public Component(final Delegate ui) {
-        setComponentUI(ui);
+    public Component(final Delegate delegate) {
+        setDelegate(delegate);
     }
 
     public void addAction(@NotNull final Action action) {
@@ -105,116 +104,139 @@ public class Component {
             action.trigger(src, event, this);
     }
 
+    @Contract(pure = true)
     @NotNull
     public Action[] getActions() {
         return actions.toArray(new Action[actions.size()]);
     }
 
+    @Contract(pure = true)
     @Nullable
-    public Delegate getComponentUI() {
-        return ui;
+    public Delegate getDelegate() {
+        return delegate;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getFocusTraverseDown() {
         return ftDown;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getFocusTraverseLeft() {
         return ftLeft;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getFocusTraverseRight() {
         return ftRight;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getFocusTraverseUp() {
         return ftUp;
     }
 
+    @Contract(pure = true)
     public int getHeight() {
         return height;
     }
 
+    @Contract(pure = true)
     @NotNull
     public String getName() {
         return name;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Container getParent() {
         return parent;
     }
 
-    public @NotNull Size getSize() {
+    @Contract(pure = true)
+    @NotNull
+    public Size getSize() {
         return new Size(getWidth(), getHeight());
     }
 
+    @Contract(pure = true)
     public int getWidth() {
         return width;
     }
 
+    @Contract(pure = true)
     public int getX() {
         return x;
     }
 
+    @Contract(pure = true)
     public int getY() {
         return y;
     }
 
+    @Contract(pure = true)
     public boolean isDraggable() {
         return draggable;
     }
 
+    @Contract(pure = true)
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Contract(pure = true)
     public boolean isFocusable() {
         return focusable;
     }
 
+    @Contract(pure = true)
     public boolean isFocused() {
         return focused;
     }
 
+    @Contract(pure = true)
     public boolean isMouseover() {
         return mouseover;
     }
 
+    @Contract(pure = true)
     public boolean isPositionInBounds(final int x, final int y) {
         return x >= getX() && y >= getY() && x < (getX() + getWidth()) && y < (getY() + getHeight());
     }
 
+    @Contract(pure = true)
     public boolean isPressed() {
         return pressed;
     }
 
+    @Contract(pure = true)
     public boolean isScrollable() {
         return scrollable;
     }
 
+    @Contract(pure = true)
     public boolean isVisible() {
         return visible;
     }
 
-    public void paint(final Graphics2D g) {
-        if (ui != null)
-            ui.paint(g, this);
+    public void paint(@NotNull final Graphics2D g) {
+        if (delegate != null)
+            delegate.paint(g, this);
     }
 
     public boolean removeAction(@NotNull final Action action) {
         return actions.remove(Objects.requireNonNull(action, "action is null"));
     }
 
-    public void setComponentUI(@Nullable final Delegate ui) {
-        if (this.ui != null)
-            this.ui.uninstallComponent(this);
-        if ((this.ui = ui) != null)
-            ui.installComponent(this);
+    public void setDelegate(@Nullable final Delegate delegate) {
+        if (this.delegate != null)
+            this.delegate.uninstallComponent(this);
+        if ((this.delegate = delegate) != null)
+            delegate.installComponent(this);
     }
 
     public void setDraggable(final boolean draggable) {
@@ -273,11 +295,11 @@ public class Component {
 
     public void setMouseover(final boolean mouseover) {
         this.mouseover = mouseover;
-        if (ui == null)
+        if (delegate == null)
             return;
-        final Sound soundMouseover = ui.getSound(MOUSEOVER, mouseover);
+        final Sound soundMouseover = delegate.getSound(MOUSEOVER, mouseover);
         if (soundMouseover != null) {
-            final Sound soundPressed = ui.getSound(MOUSEOVER, mouseover);
+            final Sound soundPressed = delegate.getSound(MOUSEOVER, mouseover);
             if (soundPressed != null)
                 soundPressed.reset();
             soundMouseover.reset();
@@ -300,11 +322,11 @@ public class Component {
 
     public void setPressed(final boolean pressed) {
         this.pressed = pressed;
-        if (ui == null)
+        if (delegate == null)
             return;
-        final Sound soundPressed = ui.getSound(PRESSED, pressed);
+        final Sound soundPressed = delegate.getSound(PRESSED, pressed);
         if (soundPressed != null) {
-            final Sound soundMouseover = ui.getSound(MOUSEOVER, mouseover);
+            final Sound soundMouseover = delegate.getSound(MOUSEOVER, mouseover);
             if (soundMouseover != null)
                 soundMouseover.reset();
             soundPressed.reset();
