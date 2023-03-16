@@ -38,7 +38,6 @@ public class DefaultDelegate implements Delegate {
 
     public Color background = Color.BLACK;
     public Color foreground = Color.WHITE;
-    public Color focus = new Color(0xE01010);
     public Color mouseover = new Color(0x20C020);
     public Color pressed = new Color(0x00B0FF);
     public Color disabled = Color.GRAY;
@@ -60,11 +59,6 @@ public class DefaultDelegate implements Delegate {
 
     public @NotNull DefaultDelegate borderThickness(final int borderThickness) {
         this.borderThickness = borderThickness;
-        return this;
-    }
-
-    public @NotNull DefaultDelegate focus(final Color focus) {
-        this.focus = focus;
         return this;
     }
 
@@ -137,8 +131,6 @@ public class DefaultDelegate implements Delegate {
                     g.setColor(pressed);
                 else if (b.isMouseover())
                     g.setColor(mouseover);
-                else if (b.isFocused())
-                    g.setColor(focus);
                 else
                     g.setColor(border);
                 g.drawRect(b.getX(), b.getY(), b.getWidth() - 1, b.getHeight() - 1);
@@ -158,8 +150,6 @@ public class DefaultDelegate implements Delegate {
                 g.setColor(pressed);
             else if (b.isMouseover())
                 g.setColor(mouseover);
-            else if (b.isFocused())
-                g.setColor(focus);
             else
                 g.setColor(foreground);
             g.setFont(font);

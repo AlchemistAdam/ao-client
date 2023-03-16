@@ -32,7 +32,6 @@ public class Button extends Component {
     }
 
     public Button(final String text) {
-        setFocusable(true);
         setText(text);
     }
 

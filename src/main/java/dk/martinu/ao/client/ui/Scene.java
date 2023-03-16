@@ -16,8 +16,7 @@
  */
 package dk.martinu.ao.client.ui;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import java.awt.Graphics2D;
 
@@ -34,7 +33,11 @@ public class Scene extends Container {
     protected Component pressedComponent = null;
     @Nullable
     protected Component focusedComponent = null;
+    protected int caretPosition = -1;
+    protected long caretTime = 500L;
+    protected boolean drawCaret = true;
 
+    @Contract(pure = true)
     @Nullable
     @Override
     public Component getComponent(final int x, final int y) {
@@ -42,21 +45,25 @@ public class Scene extends Container {
         return c == this ? null : c;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getDefaultFocusComponent() {
         return defaultFocusComponent;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getFocusedComponent() {
         return focusedComponent;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getMouseoverComponent() {
         return mouseoverComponent;
     }
 
+    @Contract(pure = true)
     @Nullable
     public Component getPressedComponent() {
         return pressedComponent;
@@ -70,6 +77,7 @@ public class Scene extends Container {
         return false;
     }
 
+    @Contract(pure = true)
     public boolean isFocusTraversable() {
         return focusTraversable;
     }
@@ -78,6 +86,7 @@ public class Scene extends Container {
         if (invalidate(r))
             layout();
         paint(g);
+        // TODO paint caret
     }
 
     @Override
@@ -88,43 +97,21 @@ public class Scene extends Container {
         return wasRemoved;
     }
 
+    @NotNull
     @Override
     public Component removeComponent(final int index) {
         final Component c = super.removeComponent(index);
-        if (c != null && c.equals(defaultFocusComponent))
+        if (c.equals(defaultFocusComponent))
             defaultFocusComponent = null;
         return c;
     }
 
     @Override
-    public Component removeComponent(final String name) {
+    public Component removeComponent(@NotNull final String name) {
         final Component c = super.removeComponent(name);
         if (c != null && c.equals(defaultFocusComponent))
             defaultFocusComponent = null;
         return c;
-    }
-
-    public void setDefaultFocusComponent(final Component component) {
-        defaultFocusComponent = component;
-    }
-
-    public void setFocusTraversable(final boolean traversable) {
-        if (!(focusTraversable = traversable))
-            setFocusedComponent(null);
-    }
-
-    public void setFocusedComponent(final @Nullable Component component) {
-        if (component == null) {
-            if (focusedComponent != null) {
-                focusedComponent.setFocused(false);
-                focusedComponent = null;
-            }
-        }
-        else {
-            if (focusedComponent != null)
-                focusedComponent.setFocused(false);
-            (focusedComponent = component).setFocused(true);
-        }
     }
 
     public void setMouseoverComponent(@Nullable final Component component) {

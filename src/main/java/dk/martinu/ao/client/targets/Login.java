@@ -35,39 +35,35 @@ public class Login extends UITarget {
         final Scene main = new Scene();
 
         // MAIN SCENE
-        final Button bNewGame = new Button("New Game");
-        final Button bContinue = new Button("Continue");
+        final Label usernameLabel = new Label("Username");
+        final TextField usernameText = new TextField();
+        final Label passwordLabel = new Label("Password");
+        final TextField passwordText = new TextField();
+        final Button bLogIn = new Button("Log in");
         final Button bOptions = new Button("Options");
         final Button bExit = new Button("Exit");
 
-        bNewGame.addAction(((src, event, c) -> {
+        bLogIn.addAction(((src, event, c) -> {
 
         }));
-        bNewGame.setSize(sizeButton);
-        bNewGame.setComponentUI(delegate);
-        bNewGame.setFocusTraverseV(bExit, bContinue);
-
-        bContinue.setEnabled(false);
-        bContinue.setSize(sizeButton);
-        bContinue.setComponentUI(delegate);
-        bContinue.setFocusTraverseV(bNewGame, bOptions);
+        bLogIn.setSize(sizeButton);
+        bLogIn.setDelegate(delegate);
 
         bOptions.setSize(sizeButton);
-        bOptions.setComponentUI(delegate);
-        bOptions.setFocusTraverseV(bContinue, bExit);
+        bOptions.setDelegate(delegate);
 
         bExit.addAction((src, event, c) -> thread.shutdown());
         bExit.setSize(sizeButton);
-        bExit.setComponentUI(delegate);
-        bExit.setFocusTraverseV(bOptions, bNewGame);
+        bExit.setDelegate(delegate);
 
-        main.addComponent(bNewGame);
-        main.addComponent(bContinue);
+        main.addComponent(usernameLabel);
+        main.addComponent(usernameText);
+        main.addComponent(passwordLabel);
+        main.addComponent(passwordText);
+        main.addComponent(bLogIn);
         main.addComponent(bOptions);
         main.addComponent(bExit);
         main.setLayout(new StackLayout());
-        main.setDefaultFocusComponent(bNewGame);
-        main.setFocusTraversable(true);
 
 
         setScene(main);

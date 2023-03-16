@@ -61,22 +61,10 @@ public class Component {
     // flags that determine how the component is painted and interacted with
     protected boolean visible = true;
     protected boolean enabled = true;
-    protected boolean focusable = false;
-    protected boolean focused = false;
     protected boolean mouseover = false;
     protected boolean pressed = false;
     protected boolean scrollable = false;
     protected boolean draggable = false;
-    // component references to return when the focus is traversed up, left,
-    // down or right from this component
-    @Nullable
-    protected Component ftUp = null;
-    @Nullable
-    protected Component ftLeft = null;
-    @Nullable
-    protected Component ftDown = null;
-    @Nullable
-    protected Component ftRight = null;
 
     public Component() {
         this(null);
@@ -114,30 +102,6 @@ public class Component {
     @Nullable
     public Delegate getDelegate() {
         return delegate;
-    }
-
-    @Contract(pure = true)
-    @Nullable
-    public Component getFocusTraverseDown() {
-        return ftDown;
-    }
-
-    @Contract(pure = true)
-    @Nullable
-    public Component getFocusTraverseLeft() {
-        return ftLeft;
-    }
-
-    @Contract(pure = true)
-    @Nullable
-    public Component getFocusTraverseRight() {
-        return ftRight;
-    }
-
-    @Contract(pure = true)
-    @Nullable
-    public Component getFocusTraverseUp() {
-        return ftUp;
     }
 
     @Contract(pure = true)
@@ -189,16 +153,6 @@ public class Component {
     }
 
     @Contract(pure = true)
-    public boolean isFocusable() {
-        return focusable;
-    }
-
-    @Contract(pure = true)
-    public boolean isFocused() {
-        return focused;
-    }
-
-    @Contract(pure = true)
     public boolean isMouseover() {
         return mouseover;
     }
@@ -245,48 +199,6 @@ public class Component {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public void setFocusTraverse(@Nullable final Component ftUp, @Nullable final Component ftDown,
-            @Nullable final Component ftLeft, @Nullable final Component ftRight) {
-        this.ftUp = ftUp;
-        this.ftDown = ftDown;
-        this.ftLeft = ftLeft;
-        this.ftRight = ftRight;
-    }
-
-    public void setFocusTraverseDown(@Nullable final Component ftDown) {
-        this.ftDown = ftDown;
-    }
-
-    public void setFocusTraverseH(@Nullable final Component ftLeft, @Nullable final Component ftRight) {
-        this.ftLeft = ftLeft;
-        this.ftRight = ftRight;
-    }
-
-    public void setFocusTraverseLeft(@Nullable final Component ftLeft) {
-        this.ftLeft = ftLeft;
-    }
-
-    public void setFocusTraverseRight(@Nullable final Component ftRight) {
-        this.ftRight = ftRight;
-    }
-
-    public void setFocusTraverseUp(@Nullable final Component ftUp) {
-        this.ftUp = ftUp;
-    }
-
-    public void setFocusTraverseV(@Nullable final Component ftUp, @Nullable final Component ftDown) {
-        this.ftUp = ftUp;
-        this.ftDown = ftDown;
-    }
-
-    public void setFocusable(final boolean focusable) {
-        this.focusable = focusable;
-    }
-
-    public void setFocused(final boolean focused) {
-        this.focused = focused;
     }
 
     public void setHeight(final int height) {
@@ -390,48 +302,12 @@ public class Component {
         sb.append(visible);
         sb.append(", enabled=");
         sb.append(enabled);
-        sb.append(", focusable=");
-        sb.append(focusable);
-        sb.append(", focused=");
-        sb.append(focused);
         sb.append(", mouseover=");
         sb.append(mouseover);
         sb.append(", pressed=");
         sb.append(pressed);
         sb.append(", scrollable=");
         sb.append(scrollable);
-        sb.append(", ftUp=");
-        if (ftUp != null) {
-            sb.append(ftUp.getClass().getName());
-            sb.append('@');
-            sb.append(ftUp.hashCode());
-        }
-        else
-            sb.append((Object) null);
-        sb.append(", ftLeft=");
-        if (ftLeft != null) {
-            sb.append(ftLeft.getClass().getName());
-            sb.append('@');
-            sb.append(ftLeft.hashCode());
-        }
-        else
-            sb.append((Object) null);
-        sb.append(", ftDown=");
-        if (ftDown != null) {
-            sb.append(ftDown.getClass().getName());
-            sb.append('@');
-            sb.append(ftDown.hashCode());
-        }
-        else
-            sb.append((Object) null);
-        sb.append(", ftRight=");
-        if (ftRight != null) {
-            sb.append(ftRight.getClass().getName());
-            sb.append('@');
-            sb.append(ftRight.hashCode());
-        }
-        else
-            sb.append((Object) null);
         sb.append(']');
 
         final String rv = sb.toString();

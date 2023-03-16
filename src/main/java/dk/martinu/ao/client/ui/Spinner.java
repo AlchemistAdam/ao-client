@@ -46,10 +46,6 @@ public class Spinner<E> extends Container {
 
         setElements(array);
 
-        buttonLeft.setFocusTraverseDown(buttonRight);
-        buttonLeft.setFocusTraverseRight(buttonRight);
-        buttonRight.setFocusTraverseLeft(buttonLeft);
-        buttonRight.setFocusTraverseUp(buttonLeft);
         addComponent(label);
         addComponent(buttonLeft);
         addComponent(buttonRight);

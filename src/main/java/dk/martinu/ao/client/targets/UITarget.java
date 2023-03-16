@@ -21,17 +21,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.Graphics2D;
 import java.awt.event.*;
-import java.util.Objects;
-import java.util.function.Function;
 
 import dk.martinu.ao.client.core.GameThread;
-import dk.martinu.ao.client.event.*;
-import dk.martinu.ao.client.ui.*;
+import dk.martinu.ao.client.event.KeyInput;
+import dk.martinu.ao.client.event.MouseAction;
+import dk.martinu.ao.client.ui.Component;
+import dk.martinu.ao.client.ui.Scene;
 import dk.martinu.ao.client.util.Resolution;
-
-import static dk.martinu.ao.client.ui.FocusTraverseDirection.*;
-import static java.awt.event.KeyEvent.KEY_PRESSED;
-import static java.awt.event.KeyEvent.KEY_RELEASED;
 
 public class UITarget extends AbstractTarget {
 
@@ -52,7 +48,6 @@ public class UITarget extends AbstractTarget {
 
     public void setScene(@Nullable final Scene scene) {
         if (this.scene != null) {
-            this.scene.setFocusedComponent(null);
             this.scene.setMouseoverComponent(null);
             this.scene.setPressedComponent(null);
         }
@@ -62,134 +57,17 @@ public class UITarget extends AbstractTarget {
     @Override
     public void keyTyped(@NotNull final KeyEvent event) {
         super.keyTyped(event);
-        if (scene != null) {
-            final Component focus = scene.getFocusedComponent();
-            if (focus instanceof Text text)
-                text.onKeyTyped(event);
-        }
-    }
-
-    @Nullable
-    public Component traverseFocus(@NotNull final FocusTraverseDirection ftd) {
-        Objects.requireNonNull(ftd);
-        if (scene != null && scene.isFocusTraversable()) {
-
-            // traverse from currently focused component
-            Component c = scene.getFocusedComponent();
-            if (c != null) {
-
-                // lambda for traversing components depending on direction
-                final Function<Component, Component> nextFocus = switch (ftd) {
-                    case UP -> Component::getFocusTraverseUp;
-                    case DOWN -> Component::getFocusTraverseDown;
-                    case LEFT -> Component::getFocusTraverseLeft;
-                    case RIGHT -> Component::getFocusTraverseRight;
-                };
-
-                // begin traversal
-                while ((c = nextFocus.apply(c)) != null) {
-                    // traversal is cyclic
-                    if (c == scene.getFocusedComponent())
-                        return null;
-                    // a new focusable component is found
-                    if (c.isFocusable() && c.isEnabled())
-                        break;
-                }
-            }
-            // no component is focused - use default
-            else
-                c = scene.getDefaultFocusComponent();
-
-            // set new focused component if one is found
-            if (c != null) {
-                scene.setPressedComponent(null);
-                scene.setFocusedComponent(c);
-                return c;
-            }
-        }
-        return null;
+        keyInputBuffer.add(new KeyInput(null, event));
+//        if (scene != null) {
+//            final Component focus = scene.getFocusedComponent();
+//            if (focus instanceof TextField textField)
+//                textField.onKeyTyped(event);
+//        }
     }
 
     @Override
     protected void initKeyBindings() {
-        final KeyAction focusTraverseUp = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(UP) != null) {
-                    action.setUserObject(event);
-                    return false;
-                }
-            }
-            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
-                action.setUserObject(null);
-                return false;
-            }
-            return true;
-        });
-        bindKeys(focusTraverseUp, KeyEvent.VK_UP, KeyEvent.VK_W);
 
-        final KeyAction focusTraverseLeft = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(LEFT) != null) {
-                    action.setUserObject(event);
-                    return false;
-                }
-            }
-            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
-                action.setUserObject(null);
-                return false;
-            }
-            return true;
-        });
-        bindKeys(focusTraverseLeft, KeyEvent.VK_LEFT, KeyEvent.VK_A);
-
-        final KeyAction focusTraverseDown = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(DOWN) != null) {
-                    action.setUserObject(event);
-                    return false;
-                }
-            }
-            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
-                action.setUserObject(null);
-                return false;
-            }
-            return true;
-        });
-        bindKeys(focusTraverseDown, KeyEvent.VK_DOWN, KeyEvent.VK_S);
-
-        final KeyAction focusTraverseRight = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (event.getID() == KEY_PRESSED) {
-                if (action.getUserObject() == null && traverseFocus(RIGHT) != null) {
-                    action.setUserObject(event);
-                    return false;
-                }
-            }
-            else if (event.getID() == KEY_RELEASED && action.getUserObject() != null) {
-                action.setUserObject(null);
-                return false;
-            }
-            return true;
-        });
-        bindKeys(focusTraverseRight, KeyEvent.VK_RIGHT, KeyEvent.VK_D);
-
-        final KeyAction focusDoAction = new OnPressAndReleaseKeyAction(200, (action, event) -> {
-            if (scene == null)
-                return true;
-            final Component fc = scene.getFocusedComponent();
-            if (fc != null) {
-                if (event.getID() == KEY_PRESSED) {
-                    scene.setPressedComponent(fc);
-                    return false;
-                }
-                else if (fc.isPressed()) {
-                    scene.setPressedComponent(null);
-                    fc.doActions(this, event);
-                    return false;
-                }
-            }
-            return true;
-        });
-        bindKeys(focusDoAction, KeyEvent.VK_ENTER, KeyEvent.VK_SPACE);
     }
 
     public class UIMouseAction implements MouseAction {
@@ -226,10 +104,6 @@ public class UITarget extends AbstractTarget {
                 return;
             final Component mc = scene.getMouseoverComponent();
             if (event.getButton() == MouseEvent.BUTTON1 && mc != null && mc.isEnabled()) {
-                if (mc.isFocusable())
-                    scene.setFocusedComponent(mc);
-                else
-                    scene.setFocusedComponent(null);
                 scene.setPressedComponent(mc);
             }
         }
