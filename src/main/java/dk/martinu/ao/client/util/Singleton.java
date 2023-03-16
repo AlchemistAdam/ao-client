@@ -17,7 +17,7 @@ public class Singleton<T> {
     }
 
     @NotNull
-    public T getValue() {
+    public T get() {
         if (value == null)
             synchronized (this) {
                 if (value == null)
