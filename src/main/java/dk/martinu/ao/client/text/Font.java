@@ -42,7 +42,7 @@ public class Font {
     @NotNull
     final GlyphIndexMap map = new GlyphIndexMap();
 
-    Font(@NotNull final String name, final int height, @NotNull final Glyph[] glyphs) {
+    public Font(@NotNull final String name, final int height, @NotNull final Glyph[] glyphs) {
         this.name = Objects.requireNonNull(name, "name is null");
         if (height <= 0)
             throw new IllegalArgumentException("font height must be greater than 0");
