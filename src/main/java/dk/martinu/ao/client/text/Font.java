@@ -34,13 +34,16 @@ import java.util.Objects;
 // DOC
 public class Font {
 
+    @NotNull
+    public String name;
     public final int height;
     @NotNull
     final Glyph[] glyphs;
     @NotNull
     final GlyphIndexMap map = new GlyphIndexMap();
 
-    Font(final int height, @NotNull final Glyph[] glyphs) {
+    Font(@NotNull final String name, final int height, @NotNull final Glyph[] glyphs) {
+        this.name = Objects.requireNonNull(name, "name is null");
         if (height <= 0)
             throw new IllegalArgumentException("font height must be greater than 0");
         this.height = height;
@@ -62,6 +65,7 @@ public class Font {
         return glyphs.length;
     }
 
+    @Contract(pure = true)
     public int[] getGlyphIndices(@NotNull final String s) {
         final char[] chars = s.toCharArray();
         int[] ints = new int[chars.length];

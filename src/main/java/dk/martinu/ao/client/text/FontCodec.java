@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import dk.martinu.ao.client.util.Log;
@@ -36,6 +37,7 @@ public class FontCodec {
     @NotNull
     private static Font readImpl(@NotNull final InputStream source) throws IOException {
 
+        final String fontName;
         final int fontHeight;
         final Glyph[] glyphs;
 
@@ -60,6 +62,22 @@ public class FontCodec {
                 throw new FontFormatException(pos, "invalid tag");
             pos += n;
 
+
+            // font name
+            n = in.readNBytes(iBuffer, 0, INT);
+            if (n != INT)
+                throw new FontFormatException(pos, "missing font height");
+            final int nameLength = getInt(iBuffer);
+            if (nameLength < 0)
+                throw new FontFormatException(pos, "invalid name length");
+            pos += n;
+            {
+                final byte[] nameBytes = new byte[nameLength];
+                n = in.readNBytes(nameBytes, 0, nameLength);
+                if (n != nameLength)
+                    throw new FontFormatException(pos, "missing font name");
+                fontName = new String(nameBytes, StandardCharsets.UTF_8);
+            }
 
             // font height
             n = in.readNBytes(iBuffer, 0, INT);
@@ -173,6 +191,6 @@ public class FontCodec {
             }
         }
 
-        return new Font(fontHeight, glyphs);
+        return new Font(fontName, fontHeight, glyphs);
     }
 }
