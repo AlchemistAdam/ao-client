@@ -1,5 +1,7 @@
 package dk.martinu.ao.client.text;
 
+import org.jetbrains.annotations.Contract;
+
 /**
  * A glyph instance is a visual representation (image) of a character.
  *
@@ -59,7 +61,8 @@ public class Glyph {
      * @param width the width
      * @param value the character
      */
-    Glyph(final int width, final char value) {
+    @Contract(pure = true)
+    public Glyph(final int width, final char value) {
         this(true, width, 0, value, 0, null, null);
     }
 
@@ -75,7 +78,8 @@ public class Glyph {
      *                     {@code null}
      * @param data         the image data (alpha values), or {@code null}
      */
-    Glyph(final boolean isWhitespace, final int width, final int height, final char value, final int offsetY,
+    @Contract(pure = true)
+    public Glyph(final boolean isWhitespace, final int width, final int height, final char value, final int offsetY,
             final int[] offsetX, final byte[] data) {
         this.isWhitespace = isWhitespace;
         this.width = width;
