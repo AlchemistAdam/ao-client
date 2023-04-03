@@ -53,8 +53,8 @@ public class ScrollView extends Container {
     // TODO
     @Override
     public void paint(@NotNull final Graphics2D g) {
-        if (ui != null)
-            ui.paint(g, this);
+        if (delegate != null)
+            delegate.paint(g, this);
         final Shape clip = g.getClip();
         g.setClip(getX(), getY(), getWidth(), getHeight());
         // paint components
