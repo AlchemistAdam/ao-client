@@ -16,6 +16,7 @@
  */
 package dk.martinu.ao.client.event;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.KeyEvent;
@@ -111,6 +112,19 @@ public final class KeyInputBuffer {
     }
 
     /**
+     * Adds the specified {@link KeyInput} object to the buffer.
+     * <p>
+     * <b>NOTE:</b> this method does not check for null pointers. {@code input}
+     * must not be null, otherwise it might result in an exception.
+     */
+    public synchronized void add(@NotNull final KeyInput input) {
+        // expand capacity if necessary
+        if (index == inputBuffer.length)
+            inputBuffer = Arrays.copyOf(inputBuffer, index + 1);
+        inputBuffer[index++] = input;
+    }
+
+    /**
      * Adds all {@link KeyInput} objects in the specified array to this
      * buffer.
      * <p>
@@ -120,6 +134,7 @@ public final class KeyInputBuffer {
      *
      * @param inputArray Array of key input to add
      */
+    @Contract(value = "null -> fail")
     public synchronized void add(@NotNull final KeyInput[] inputArray) {
         // expand capacity if necessary
         if (index + inputArray.length > inputBuffer.length)
