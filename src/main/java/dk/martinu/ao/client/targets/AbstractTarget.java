@@ -23,10 +23,10 @@ import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.util.Objects;
 
-import dk.martinu.ao.client.util.Timer;
 import dk.martinu.ao.client.core.GameThread;
 import dk.martinu.ao.client.event.*;
 import dk.martinu.ao.client.util.Resolution;
+import dk.martinu.ao.client.util.Timer;
 
 import static dk.martinu.ao.client.event.KeyAction.KEY_PRESSED;
 import static dk.martinu.ao.client.event.KeyAction.KEY_RELEASED;
@@ -53,6 +53,10 @@ public abstract class AbstractTarget implements Target {
     public final Timer timer = new Timer();
 
     /**
+     * Buffer containing received key events.
+     */
+    final KeyInputBuffer keyInputBuffer = new KeyInputBuffer();
+    /**
      * The current mouse action, can be {@code null}.
      */
     @Nullable
@@ -70,10 +74,6 @@ public abstract class AbstractTarget implements Target {
      * Key bindings ({@link KeyAction}s) for pressed key events.
      */
     private final KeyMap keyActionsReleased = new KeyMap();
-    /**
-     * Buffer containing received key events.
-     */
-    private final KeyInputBuffer keyInputBuffer = new KeyInputBuffer();
 
     /**
      * Constructs a new target with the specified {@link GameThread} set as the
@@ -163,6 +163,9 @@ public abstract class AbstractTarget implements Target {
             keyInputBuffer.add(list.mapToInput(event));
     }
 
+    /**
+     * Does nothing.
+     */
     @Override
     public void keyTyped(@NotNull final KeyEvent event) { }
 
@@ -264,7 +267,7 @@ public abstract class AbstractTarget implements Target {
 
     // DOC
     @Override
-    public void paint(final Graphics2D g, final Resolution r) {
+    public void paint(@NotNull final Graphics2D g, @NotNull final Resolution r) {
 //        timer.measure();
     }
 
