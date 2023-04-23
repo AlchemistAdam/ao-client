@@ -20,7 +20,31 @@ public class FontCodec {
         Log.i("reading font from file {" + file + "}");
         if (!file.getName().endsWith(".font"))
             Log.w("suspicious font file extension {" + file.getName() + "}");
-        return readImpl(new FileInputStream(file));
+        return readImpl(file);
+    }
+
+    public static void saveFile(@NotNull final Font font, @NotNull final File file) throws IOException {
+        Objects.requireNonNull(font, "font is null");
+        Objects.requireNonNull(file, "file is null");
+        if (!file.getName().endsWith(".font"))
+            Log.w("suspicious font file extension {" + file.getName() + "}");
+        saveImpl(font, file);
+    }
+
+    @Contract(mutates = "param2", value = "_, _ -> param2")
+    private static byte[] getBytes(final int i, final byte[] b) {
+        b[0] = (byte) (i << 24 & 0xFF);
+        b[1] = (byte) (i << 16 & 0xFF);
+        b[2] = (byte) (i << 8 & 0xFF);
+        b[3] = (byte) (i & 0xFF);
+        return b;
+    }
+
+    @Contract(mutates = "param2", value = "_, _ -> param2")
+    private static byte[] getBytes(final char c, final byte[] b) {
+        b[2] = (byte) (c << 8 & 0xFF);
+        b[3] = (byte) (c & 0xFF);
+        return b;
     }
 
     @Contract(pure = true)
@@ -35,14 +59,13 @@ public class FontCodec {
 
     @Contract(value = "_ -> new", pure = true)
     @NotNull
-    private static Font readImpl(@NotNull final InputStream source) throws IOException {
+    private static Font readImpl(@NotNull final File file) throws IOException {
 
         final String fontName;
         final int fontHeight;
         final Glyph[] glyphs;
 
-        try (DataInputStream in = new DataInputStream(
-                Objects.requireNonNull(source, "source is null"))) {
+        try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
 
             final int INT = 4;
             final byte[] iBuffer = new byte[INT];
@@ -129,13 +152,12 @@ public class FontCodec {
                     throw new FontFormatException(pos, "invalid height");
                 pos += n;
 
-                // read char
+                // read char value
                 n = in.readNBytes(cBuffer, 0, CHAR);
                 if (n != CHAR)
                     throw new FontFormatException(pos, "missing character");
                 final char value = getChar(cBuffer);
                 pos += n;
-
 
                 // offsetY
                 n = in.readNBytes(iBuffer, 0, INT);
@@ -192,5 +214,36 @@ public class FontCodec {
         }
 
         return new Font(fontName, fontHeight, glyphs);
+    }
+
+    private static void saveImpl(@NotNull final Font font, @NotNull final File file) throws IOException {
+        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(file))) {
+
+            final int INT = 4;
+            final byte[] iBuffer = new byte[INT];
+            final int CHAR = 2;
+            final byte[] cBuffer = new byte[CHAR];
+
+            out.write(getBytes(TAG, iBuffer));
+
+            out.write(getBytes(font.name.length(), iBuffer));
+            out.write(font.name.getBytes(StandardCharsets.UTF_8));
+            out.write(getBytes(font.height, iBuffer));
+            out.write(getBytes(font.getGlyphCount(), iBuffer));
+
+            // glyphs
+            for (Glyph glyph : font.glyphs) {
+                out.writeBoolean(glyph.isWhitespace);
+                out.write(getBytes(glyph.width, iBuffer));
+                out.write(getBytes(glyph.height, iBuffer));
+                out.write(getBytes(glyph.value, cBuffer));
+                out.write(getBytes(glyph.offsetY, iBuffer));
+                out.write(getBytes(glyph.offsetX.length, iBuffer));
+                for (int offset : glyph.offsetX)
+                    out.write(getBytes(offset, iBuffer));
+                out.write(getBytes(glyph.data.length, iBuffer));
+                out.write(glyph.data);
+            }
+        }
     }
 }
