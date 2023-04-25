@@ -23,12 +23,12 @@ public class FontCodec {
         return readImpl(file);
     }
 
-    public static void saveFile(@NotNull final Font font, @NotNull final File file) throws IOException {
+    public static void writeFile(@NotNull final Font font, @NotNull final File file) throws IOException {
         Objects.requireNonNull(font, "font is null");
         Objects.requireNonNull(file, "file is null");
         if (!file.getName().endsWith(".font"))
             Log.w("suspicious font file extension {" + file.getName() + "}");
-        saveImpl(font, file);
+        writeImpl(font, file);
     }
 
     @Contract(mutates = "param2", value = "_, _ -> param2")
@@ -216,7 +216,7 @@ public class FontCodec {
         return new Font(fontName, fontHeight, glyphs);
     }
 
-    private static void saveImpl(@NotNull final Font font, @NotNull final File file) throws IOException {
+    private static void writeImpl(@NotNull final Font font, @NotNull final File file) throws IOException {
         try (DataOutputStream out = new DataOutputStream(new FileOutputStream(file))) {
 
             final int INT = 4;
