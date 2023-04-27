@@ -42,8 +42,8 @@ public class FontCodec {
 
     @Contract(mutates = "param2", value = "_, _ -> param2")
     private static byte[] getBytes(final char c, final byte[] b) {
-        b[2] = (byte) (c << 8 & 0xFF);
-        b[3] = (byte) (c & 0xFF);
+        b[0] = (byte) (c << 8 & 0xFF);
+        b[1] = (byte) (c & 0xFF);
         return b;
     }
 
