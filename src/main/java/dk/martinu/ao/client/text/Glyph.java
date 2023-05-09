@@ -12,49 +12,45 @@ import org.jetbrains.annotations.Contract;
  */
 public class Glyph {
 
+    private static final int[] EMPTY_OFFSET_X = new int[0];
+    private static final byte[] EMPTY_DATA = new byte[0];
+
     static int hash(final char value) {
         return value * 31;
     }
 
     /**
+     * The character that this glyph represents.
+     */
+    public final char value;
+    /**
      * Width of the glyph in pixels.
      */
     public final int width;
     /**
-     * Height of the glyph in pixels. Will be {@code 0} if the glyph is
-     * whitespace.
+     * Height of the glyph in pixels.
      */
     public final int height;
+    /**
+     * {@code true} if this glyph represents whitespace, otherwise
+     * {@code false}.
+     */
+    public final boolean isWhitespace;
     /**
      * Vertical offset of the glyph in pixels. When drawing the glyph, this is
      * the y-position of the glyph relative to the origin.
      */
     public final int offsetY;
     /**
-     * {@code true} if this glyph represents whitespace, otherwise
-     * {@code false}. Whitespace glyphs only have a width and a character
-     * value, all other properties are {@code 0} or {@code null};
-     */
-    public final boolean isWhitespace;
-    /**
-     * The character that this glyph represents.
-     */
-    public final char value;
-    /**
-     * The image data (alpha values) of the glyph. Will be {@code null} if the
-     * glyph is whitespace.
-     */
-    public final byte[] data;
-    /**
-     * Horizontal offsets of the glyph relative to other glyphs. Will be
-     * {@code null} if the glyph is whitespace.
+     * Horizontal offsets between the glyph and other preceding glyphs.
      */
     public final int[] offsetX;
+    /**
+     * The image data (alpha values) of the glyph.
+     */
+    public final byte[] data;
 
     /**
-     * Cached hash code.
-     * <p>
-     * /**
      * Constructs a {@link #isWhitespace whitespace} glyph with the
      * specified width and {@code char} value.
      *
@@ -91,9 +87,10 @@ public class Glyph {
     }
 
     /**
-     * Returns the horizontal offset between this glyph and the glyph with the
-     * specified id.
+     * Returns the horizontal offset (on the left side) between this glyph and
+     * the glyph with the specified id.
      */
+    @Contract(pure = true)
     public int getOffsetX(final int id) {
         if (offsetX != null)
             for (int i = 0; i < offsetX.length; i += 2)
