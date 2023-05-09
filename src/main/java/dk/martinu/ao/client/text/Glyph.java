@@ -82,8 +82,8 @@ public class Glyph {
         this.height = height;
         this.value = value;
         this.offsetY = offsetY;
-        this.offsetX = offsetX;
-        this.data = data;
+        this.offsetX = offsetX != null ? offsetX : EMPTY_OFFSET_X;
+        this.data = data != null ? data : EMPTY_DATA;
     }
 
     /**
@@ -92,7 +92,7 @@ public class Glyph {
      */
     @Contract(pure = true)
     public int getOffsetX(final int id) {
-        if (offsetX != null)
+        if (offsetX.length != 0)
             for (int i = 0; i < offsetX.length; i += 2)
                 if (offsetX[i] == id)
                     return offsetX[i + 1];
