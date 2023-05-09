@@ -125,14 +125,12 @@ public class FontCodec {
             glyphs = new Glyph[glyphCount];
             for (int i = 0; i < glyphCount; i++) {
 
-                // isWhitespace
-                final int b = in.read();
-                if (b == -1)
-                    throw new FontFormatException(pos, "missing isWhitespace");
-                if (b != 0 && b != 1)
-                    throw new FontFormatException(pos, "invalid isWhitespace");
-                final boolean isWhitespace = b == 1;
-                pos += 1;
+                // value
+                n = in.readNBytes(cBuffer, 0, CHAR);
+                if (n != CHAR)
+                    throw new FontFormatException(pos, "missing value");
+                final char value = getChar(cBuffer);
+                pos += n;
 
                 // width
                 n = in.readNBytes(iBuffer, 0, INT);
@@ -148,24 +146,26 @@ public class FontCodec {
                 if (n != INT)
                     throw new FontFormatException(pos, "missing height");
                 final int height = getInt(iBuffer);
-                if (height < 0 || height > fontHeight || (!isWhitespace && height == 0))
+                if (height < 0) // height > fontHeight TODO check if height can be > when paint is implemented
                     throw new FontFormatException(pos, "invalid height");
                 pos += n;
 
-                // read char value
-                n = in.readNBytes(cBuffer, 0, CHAR);
-                if (n != CHAR)
-                    throw new FontFormatException(pos, "missing character");
-                final char value = getChar(cBuffer);
-                pos += n;
+                // isWhitespace
+                final int b = in.read();
+                if (b == -1)
+                    throw new FontFormatException(pos, "missing isWhitespace");
+                if (b != 0 && b != 1)
+                    throw new FontFormatException(pos, "invalid isWhitespace");
+                final boolean isWhitespace = b == 1;
+                pos += 1;
 
                 // offsetY
                 n = in.readNBytes(iBuffer, 0, INT);
                 if (n != INT)
                     throw new FontFormatException(pos, "missing offsetY");
                 final int offsetY = getInt(iBuffer);
-                if (offsetY < 0 || height + offsetY > fontHeight)
-                    throw new FontFormatException(pos, "invalid offsetY");
+//                if (offsetY < 0 || height + offsetY > fontHeight) TODO check if oY can be invalid, log suspicious values
+//                    throw new FontFormatException(pos, "invalid offsetY");
                 pos += n;
 
                 // offsetX count
@@ -184,19 +184,21 @@ public class FontCodec {
                     n = in.readNBytes(iBuffer, 0, INT);
                     if (n != INT)
                         throw new FontFormatException(pos, "missing offsetX ID");
-                    final int i0 = getInt(iBuffer);
-                    if (i0 < 0 || i0 >= glyphCount)
+                    final int id = getInt(iBuffer);
+                    if (id < 0 || id >= glyphCount)
                         throw new FontFormatException(pos, "invalid offsetX ID");
                     pos += n;
 
                     n = in.readNBytes(iBuffer, 0, INT);
                     if (n != INT)
                         throw new FontFormatException(pos, "missing offsetX");
-                    final int i1 = getInt(iBuffer);
+                    final int offset = getInt(iBuffer);
                     pos += n;
+                    if (offset == 0)
+                        Log.w("redundant offsetX (" + i + ")");
 
-                    offsetX[j] = i0;
-                    offsetX[j + 1] = i1;
+                    offsetX[j] = id;
+                    offsetX[j + 1] = offset;
                 }
 
 
@@ -207,6 +209,8 @@ public class FontCodec {
                 if (n != len)
                     throw new FontFormatException(pos, "missing data");
                 pos += n;
+                if (isWhitespace && len != 0)
+                    Log.w("whitespace glyph has data (" + i + ")");
 
 
                 glyphs[i] = new Glyph(isWhitespace, width, height, value, offsetY, offsetX, data);
@@ -233,15 +237,14 @@ public class FontCodec {
 
             // glyphs
             for (Glyph glyph : font.glyphs) {
-                out.writeBoolean(glyph.isWhitespace);
+                out.write(getBytes(glyph.value, cBuffer));
                 out.write(getBytes(glyph.width, iBuffer));
                 out.write(getBytes(glyph.height, iBuffer));
-                out.write(getBytes(glyph.value, cBuffer));
+                out.writeBoolean(glyph.isWhitespace);
                 out.write(getBytes(glyph.offsetY, iBuffer));
                 out.write(getBytes(glyph.offsetX.length, iBuffer));
                 for (int offset : glyph.offsetX)
                     out.write(getBytes(offset, iBuffer));
-                out.write(getBytes(glyph.data.length, iBuffer));
                 out.write(glyph.data);
             }
         }
