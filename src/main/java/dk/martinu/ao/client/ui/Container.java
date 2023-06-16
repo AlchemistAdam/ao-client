@@ -93,7 +93,7 @@ public class Container extends Component implements Iterable<Component> {
     @Contract(pure = true)
     @NotNull
     public List<Component> getComponents() {
-        return components;
+        return Collections.unmodifiableList(components);
     }
 
     @Contract(pure = true)
