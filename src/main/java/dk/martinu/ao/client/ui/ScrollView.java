@@ -58,7 +58,7 @@ public class ScrollView extends Container {
         final Shape clip = g.getClip();
         g.setClip(getX(), getY(), getWidth(), getHeight());
         // paint components
-        for (final Component c : getComponents())
+        for (final Component c : components)
             if (c.isVisible() && isWithinBounds(c))
                 c.paint(g);
         g.setClip(clip);

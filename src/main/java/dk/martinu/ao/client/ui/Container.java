@@ -40,7 +40,6 @@ public class Container extends Component implements Iterable<Component> {
 
     public void addComponent(@NotNull final Component component) throws UIException {
         Objects.requireNonNull(component, "component must not be null");
-        final List<Component> components = getComponents();
         if (components.contains(component))
             throw new UIException("component is already added");
         if (component.getParent() != null)
@@ -57,7 +56,6 @@ public class Container extends Component implements Iterable<Component> {
     @Contract(pure = true)
     @NotNull
     public Component getComponent(final int index) {
-        final List<Component> components = getComponents();
         if (index < 0 || index >= components.size())
             throw new IndexOutOfBoundsException();
         return components.get(index);
@@ -66,7 +64,7 @@ public class Container extends Component implements Iterable<Component> {
     @Contract(pure = true)
     @Nullable
     public Component getComponent(final int x, final int y) {
-        for (final Component component : getComponents())
+        for (final Component component : components)
             if (component.isVisible() && component.isPositionInBounds(x, y))
                 if (component instanceof Container c)
                     return c.getComponent(x, y);
@@ -85,7 +83,7 @@ public class Container extends Component implements Iterable<Component> {
     @Nullable
     public Component getComponent(@NotNull final String name) {
         Objects.requireNonNull(name, "name is null");
-        for (final Component c : getComponents()) {
+        for (final Component c : components) {
             if (Objects.equals(c.getName(), name))
                 return c;
         }
@@ -114,24 +112,24 @@ public class Container extends Component implements Iterable<Component> {
     public void layout() {
         if (layout != null)
             layout.layoutContainer(this);
-        for (final Component component : getComponents())
-            if (component instanceof Container)
-                ((Container) component).layout();
+        for (final Component component : components)
+            if (component instanceof Container container)
+                container.layout();
     }
 
     public void paint(@NotNull final Graphics2D g) {
         super.paint(g);
         // paint components
         g.translate(x, y);
-        for (final Component c : getComponents())
+        for (final Component c : components)
             if (c.isVisible())
                 c.paint(g);
         g.translate(-x, -y);
     }
 
     public boolean removeComponent(@NotNull final Component component) {
-        final boolean wasRemoved = getComponents().remove(
-                Objects.requireNonNull(component, "component is null"));
+        Objects.requireNonNull(component, "component is null");
+        final boolean wasRemoved = components.remove(component);
         if (wasRemoved)
             component.setParent(null);
         return wasRemoved;
@@ -139,7 +137,6 @@ public class Container extends Component implements Iterable<Component> {
 
     @NotNull
     public Component removeComponent(final int index) {
-        final List<Component> components = getComponents();
         if (index < 0 || index >= components.size())
             throw new IndexOutOfBoundsException();
         final Component c = components.remove(index);
@@ -150,7 +147,6 @@ public class Container extends Component implements Iterable<Component> {
     @Nullable
     public Component removeComponent(@NotNull final String name) {
         Objects.requireNonNull(name, "name is null");
-        final List<Component> components = getComponents();
         for (Component c : components)
             if (Objects.equals(c.getName(), name)) {
                 components.remove(c);
