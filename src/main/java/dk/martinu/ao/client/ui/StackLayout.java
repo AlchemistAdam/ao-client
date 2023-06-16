@@ -70,7 +70,7 @@ public class StackLayout implements Layout {
         int width, height;
         if (orientation == VERTICAL) {
             width = 0;
-            height = gap * n - 1;
+            height = gap * (n - 1);
             for (Component c : con) {
                 if (c.width > width)
                     width = c.width;
@@ -78,7 +78,7 @@ public class StackLayout implements Layout {
             }
         }
         else { // orientation == HORIZONTAL
-            width = gap * n - 1;
+            width = gap * (n - 1);
             height = 0;
             for (Component c : con) {
                 width += c.width;
