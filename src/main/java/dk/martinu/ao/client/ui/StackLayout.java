@@ -62,7 +62,7 @@ public class StackLayout implements Layout {
 
     @Override
     public void layoutContainer(@NotNull final Container con) {
-        final int n = con.getComponents().size();
+        final int n = con.components.size();
         if (n == 0)
             return;
 
