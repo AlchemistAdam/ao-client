@@ -102,6 +102,13 @@ public class Container extends Component implements Iterable<Component> {
         return layout;
     }
 
+    @Override
+    public void installTheme(@NotNull final Theme theme) {
+        super.installTheme(theme);
+        for (final Component component : components)
+            component.installTheme(theme);
+    }
+
     @Contract(value = "-> new", pure = true)
     @NotNull
     @Override
