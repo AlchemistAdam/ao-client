@@ -104,6 +104,7 @@ public final class SimpleHashMap<K, V> {
     /**
      * Returns the value for the specified key, or {@code null}.
      *
+     * @return the value, or {@code null}
      * @throws NullPointerException if {@code key} is {@code null}
      */
     @Contract(pure = true)
