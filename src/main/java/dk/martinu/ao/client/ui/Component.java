@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import dk.martinu.ao.client.targets.Target;
 import dk.martinu.ao.client.util.Sound;
+import dk.martinu.kofi.properties.IntProperty;
 
 public class Component {
 
@@ -56,6 +57,7 @@ public class Component {
     protected int y = 0;
     protected int width = 0;
     protected int height = 0;
+    // UIX delegate
     @Nullable
     protected Delegate delegate;
     // flags that determine how the component is painted and interacted with
@@ -65,6 +67,9 @@ public class Component {
     protected boolean pressed = false;
     protected boolean scrollable = false;
     protected boolean draggable = false;
+    // style descriptor
+    @Nullable
+    protected String styleName = null;
 
     public Component() {
         this(null);
@@ -140,6 +145,31 @@ public class Component {
     @Contract(pure = true)
     public int getY() {
         return y;
+    }
+
+    public void installStyle(@NotNull final Style style) {
+        Objects.requireNonNull(style, "style is null");
+        style.accept("width", property -> {
+            if (property instanceof IntProperty intProperty)
+                //noinspection DataFlowIssue
+                setWidth(intProperty.value);
+            else
+                throw new IllegalArgumentException("invalid style property: width");
+        });
+        style.accept("height", property -> {
+            if (property instanceof IntProperty intProperty)
+                //noinspection DataFlowIssue
+                setHeight(intProperty.value);
+            else
+                throw new IllegalArgumentException("invalid style property: height");
+        });
+    }
+
+    public void installTheme(@NotNull final Theme theme) {
+        Objects.requireNonNull(theme, "theme is null");
+        final Style style = theme.getStyle(this);
+        if (style != null)
+            installStyle(style);
     }
 
     @Contract(pure = true)
