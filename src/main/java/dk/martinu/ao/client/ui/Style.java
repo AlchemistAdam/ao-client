@@ -34,7 +34,7 @@ import dk.martinu.kofi.Property;
  * @see Component#installStyle(Style)
  * @since 1.0
  */
-public abstract class Style {
+public class Style {
 
     /**
      * An unmodifiable list of the properties of this style.
