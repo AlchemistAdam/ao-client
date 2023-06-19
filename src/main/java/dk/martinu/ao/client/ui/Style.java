@@ -37,14 +37,14 @@ import dk.martinu.kofi.Property;
 public abstract class Style {
 
     /**
-     * The parent of this style, can be {@code null}.
-     */
-    @Nullable
-    public final Style parent;
-    /**
      * An unmodifiable list of the properties of this style.
      */
     public final List<Property<?>> propertyList;
+    /**
+     * The parent of this style, can be {@code null}.
+     */
+    @Nullable
+    protected Style parent;
 
     /**
      * Constructs a new style with the specified properties.
@@ -93,6 +93,17 @@ public abstract class Style {
     }
 
     /**
+     * Returns the parent style.
+     * 
+     * @return the parent style, can be {@code null}
+     */
+    @Contract(pure = true)
+    @Nullable
+    public Style getParent() {
+        return parent;
+    }
+
+    /**
      * Returns the property that matches the specified key. If no property was
      * found, then the parent, if any, is queried for a property. Otherwise
      * {@code null} is returned.
@@ -115,5 +126,15 @@ public abstract class Style {
             return parent.getProperty(key);
         else
             return null;
+    }
+
+    /**
+     * Sets the parent style.
+     * 
+     * @param parent the new parent style, can be {@code null}
+     */
+    @Contract(mutates = "this")
+    public void setParent(@Nullable final Style parent) {
+        this.parent = parent;
     }
 }
