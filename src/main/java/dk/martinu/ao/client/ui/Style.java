@@ -94,7 +94,7 @@ public class Style {
 
     /**
      * Returns the parent style.
-     * 
+     *
      * @return the parent style, can be {@code null}
      */
     @Contract(pure = true)
@@ -130,11 +130,20 @@ public class Style {
 
     /**
      * Sets the parent style.
-     * 
+     *
      * @param parent the new parent style, can be {@code null}
+     * @throws IllegalArgumentException if {@code style} or one if its parent
+     *                                  styles is equal to this style and
+     *                                  would result in a cyclic reference
      */
     @Contract(mutates = "this")
     public void setParent(@Nullable final Style parent) {
+        Style style = parent;
+        while (style != null) {
+            if (style.parent == this)
+                throw new IllegalArgumentException("cyclic reference");
+            style = style.parent;
+        }
         this.parent = parent;
     }
 }
